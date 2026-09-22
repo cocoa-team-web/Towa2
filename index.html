@@ -13,6 +13,7 @@ body{font-family:Arial,sans-serif;background:#0f0c29;color:#fff;height:100vh;ove
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer}
 
+/* ===== ЭКРАН ВХОДА ===== */
 #authScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#0f0c29;z-index:100}
 #authBox{background:#161a22;border:2px solid #00d2ff;border-radius:16px;padding:22px;width:100%;max-width:360px}
 #authBox h1{text-align:center;color:#00d2ff;font-size:24px;margin-bottom:6px}
@@ -29,6 +30,7 @@ button{font-family:inherit;cursor:pointer}
 #avatarBtn{background:#374151;color:#fff;padding:8px 12px;border:0;border-radius:8px;font-size:12px}
 .usernameHint{font-size:11px;color:#6b7280;margin-top:-4px;margin-bottom:8px}
 
+/* ===== ОСНОВНОЙ ЭКРАН ===== */
 #app{display:flex;height:100vh}
 #sidebar{width:320px;background:#161a22;border-right:1px solid #232833;display:flex;flex-direction:column;flex-shrink:0}
 #sidebarHeader{padding:12px;border-bottom:1px solid #232833;display:flex;align-items:center;gap:8px}
@@ -73,6 +75,7 @@ button{font-family:inherit;cursor:pointer}
 #empty{flex:1;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;flex-direction:column;gap:8px}
 #empty .big{font-size:64px}
 
+/* ===== МОДАЛКИ ===== */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:200}
 .modal.show{display:flex}
 .modal-box{background:#161a22;border-radius:14px;padding:20px;width:100%;max-width:400px;border:1px solid #00d2ff;max-height:90vh;overflow-y:auto}
@@ -283,9 +286,7 @@ function uploadImgBB(base64){
       if (j && j.data && j.data.url) return j.data.url;
       throw new Error((j && j.error && j.error.message) || "imgbb error");
     });
-}
-
-/* ===== ВХОД/РЕГИСТРАЦИЯ ===== */
+}/* ===== ВХОД/РЕГИСТРАЦИЯ ===== */
 $("switchMode").onclick = function(){
   regMode = !regMode;
   $("regFields").classList.toggle("hidden", !regMode);
@@ -446,9 +447,7 @@ function renderChatList(){
   for (var j = 0; j < items.length; j++){
     items[j].onclick = function(){ openChat(this.getAttribute("data-id")); };
   }
-}
-
-/* ===== ОТКРЫТИЕ ЧАТА ===== */
+}/* ===== ОТКРЫТИЕ ЧАТА ===== */
 function openChat(chatId){
   openChatId = chatId;
   document.getElementById("app").classList.add("chatOpen");
@@ -506,7 +505,7 @@ function openChat(chatId){
 
   subscribeMessages(chatId);
 }
-</script><script>
+
 /* ===== СООБЩЕНИЯ ===== */
 function subscribeMessages(chatId){
   if (msgUnsub) msgUnsub();
@@ -597,9 +596,7 @@ function sendPhoto(ev){
     }).then(function(){ toast("✅ Отправлено"); })
       .catch(function(e){ toast("❌ " + e.message); });
   });
-}
-
-/* ===== МОДАЛКА НОВОГО ЧАТА ===== */
+}/* ===== МОДАЛКА НОВОГО ЧАТА ===== */
 $("btnNew").onclick = function(){ $("newChatModal").classList.add("show"); };
 $("closeNewChat").onclick = function(){ $("newChatModal").classList.remove("show"); };
 var tabBtns = document.querySelectorAll("#newChatModal .tabs button");
