@@ -13,7 +13,6 @@ body{font-family:Arial,sans-serif;background:#0f0c29;color:#fff;height:100vh;ove
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer}
 
-/* ===== ЭКРАН ВХОДА ===== */
 #authScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#0f0c29;z-index:100}
 #authBox{background:#161a22;border:2px solid #00d2ff;border-radius:16px;padding:22px;width:100%;max-width:360px}
 #authBox h1{text-align:center;color:#00d2ff;font-size:24px;margin-bottom:6px}
@@ -30,7 +29,6 @@ button{font-family:inherit;cursor:pointer}
 #avatarBtn{background:#374151;color:#fff;padding:8px 12px;border:0;border-radius:8px;font-size:12px}
 .usernameHint{font-size:11px;color:#6b7280;margin-top:-4px;margin-bottom:8px}
 
-/* ===== ОСНОВНОЙ ЭКРАН ===== */
 #app{display:flex;height:100vh}
 #sidebar{width:320px;background:#161a22;border-right:1px solid #232833;display:flex;flex-direction:column;flex-shrink:0}
 #sidebarHeader{padding:12px;border-bottom:1px solid #232833;display:flex;align-items:center;gap:8px}
@@ -55,7 +53,6 @@ button{font-family:inherit;cursor:pointer}
 #mainHeader{padding:12px;border-bottom:1px solid #232833;display:flex;align-items:center;gap:10px;background:#161a22}
 #mainHeader h3{font-size:15px;flex:1}
 #mainHeader .sub{font-size:11px;color:#8a93a6}
-#mainHeader button{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:6px 10px;border-radius:6px;font-size:12px}
 
 #messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
 .msg{max-width:70%;padding:8px 12px;border-radius:12px;background:#1e1e3a;font-size:13px;line-height:1.4;word-break:break-word;position:relative}
@@ -76,12 +73,11 @@ button{font-family:inherit;cursor:pointer}
 #empty{flex:1;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;flex-direction:column;gap:8px}
 #empty .big{font-size:64px}
 
-/* ===== МОДАЛКИ ===== */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:200}
 .modal.show{display:flex}
 .modal-box{background:#161a22;border-radius:14px;padding:20px;width:100%;max-width:400px;border:1px solid #00d2ff;max-height:90vh;overflow-y:auto}
 .modal-box h3{color:#00d2ff;font-size:16px;margin-bottom:12px}
-.modal-box input,.modal-box select{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0a0c10;color:#fff;font-size:13px;margin-bottom:8px;outline:none}
+.modal-box input{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0a0c10;color:#fff;font-size:13px;margin-bottom:8px;outline:none}
 .modal-box input:focus{border-color:#00d2ff}
 .modal-box button{width:100%;padding:11px;border:0;border-radius:8px;font-weight:bold;font-size:14px;margin-top:6px}
 .modal-actions{display:flex;gap:8px;margin-top:8px}
@@ -103,7 +99,6 @@ button{font-family:inherit;cursor:pointer}
 </head>
 <body>
 
-<!-- ЭКРАН ВХОДА -->
 <div id="authScreen">
   <div id="authBox">
     <h1>💬 Towa</h1>
@@ -130,7 +125,6 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 
-<!-- ОСНОВНОЙ ЭКРАН -->
 <div id="app" class="hidden">
   <div id="sidebar">
     <div id="sidebarHeader">
@@ -145,7 +139,6 @@ button{font-family:inherit;cursor:pointer}
     </div>
     <div id="chatList"></div>
   </div>
-
   <div id="main">
     <div id="empty">
       <div class="big">💬</div>
@@ -162,24 +155,20 @@ button{font-family:inherit;cursor:pointer}
       <button data-tab="group">Группа</button>
       <button data-tab="channel">Канал</button>
     </div>
-
     <div id="privateTab">
       <input id="privateUsername" placeholder="@username собеседника" maxlength="20">
       <button id="createPrivate" class="btn-primary">Открыть чат</button>
     </div>
-
     <div id="groupTab" class="hidden">
       <input id="groupTitle" placeholder="Название группы" maxlength="40">
       <input id="groupUsers" placeholder="@username через запятую">
       <button id="createGroup" class="btn-primary">Создать группу</button>
     </div>
-
     <div id="channelTab" class="hidden">
       <input id="channelTitle" placeholder="Название канала" maxlength="40">
       <input id="channelUsers" placeholder="@username через запятую">
       <button id="createChannel" class="btn-primary">Создать канал</button>
     </div>
-
     <button id="closeNewChat" class="btn-alt">Отмена</button>
   </div>
 </div>
@@ -187,10 +176,8 @@ button{font-family:inherit;cursor:pointer}
 <div class="modal" id="profileModal">
   <div class="modal-box">
     <h3>Профиль</h3>
-    <div id="avatarRow2">
-      <div id="avatarPreview2" style="width:64px;height:64px;border-radius:50%;background:#0a0c10;border:2px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden">
-        👤
-      </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div id="avatarPreview2" style="width:64px;height:64px;border-radius:50%;background:#0a0c10;border:2px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden">👤</div>
       <button id="avatarBtn2" style="background:#374151;color:#fff;padding:8px 12px;border:0;border-radius:8px;font-size:12px;width:auto;margin-top:0">📷 Сменить фото</button>
       <input id="avatarFile2" type="file" accept="image/*" style="display:none">
     </div>
@@ -213,24 +200,24 @@ var firebaseConfig = {
   projectId: "towaserver-d69a8",
   storageBucket: "towaserver-d69a8.firebasestorage.app",
   messagingSenderId: "142465893423",
-  appId: "1:142465893423:web:da3e596903146925bd72da"
+  appId: "1:142465893423:web:21cd925d6736918ebd72da"
 };
 firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-/* ===== IMB.BB КЛЮЧ ===== */
+/* ===== IMB.BB ===== */
 var IMGBB_KEY = "0f26cbc872184d305fcf99072a137c35";
 
 /* ===== СОСТОЯНИЕ ===== */
-var me = null;              // firebase user
-var profile = null;         // doc data users/{uid}
-var chats = [];             // [{id, type, title, participants, lastMessage, lastTime}]
+var me = null;
+var profile = null;
+var chats = [];
 var openChatId = null;
 var msgUnsub = null;
 var chatsUnsub = null;
-var pendingAvatar = null;   // base64 для регистрации
-var pendingAvatar2 = null;  // base64 для профиля
+var pendingAvatar = null;
+var pendingAvatar2 = null;
 var regMode = false;
 var currentTab = "private";
 
@@ -264,7 +251,7 @@ function validUsername(u){
   return /^[a-zA-Z0-9_]{3,20}$/.test(u);
 }
 
-/* ===== АВАТАР: сжатие до 256x256 JPEG ===== */
+/* ===== СЖАТИЕ ФОТО ===== */
 function compressImage(file, maxSize, quality, cb){
   var reader = new FileReader();
   reader.onload = function(e){
@@ -284,36 +271,31 @@ function compressImage(file, maxSize, quality, cb){
   reader.readAsDataURL(file);
 }
 
-/* ===== ЗАГРУЗКА ФОТО НА IMGBB ===== */
+/* ===== ЗАГРУЗКА В IMGBB ===== */
 function uploadImgBB(base64){
-  // base64 = "data:image/jpeg;base64,...."
   var base64Clean = base64.split(",")[1];
   var form = new FormData();
   form.append("key", IMGBB_KEY);
   form.append("image", base64Clean);
-  return fetch("https://api.imgbb.com/1/upload", {
-    method: "POST",
-    body: form
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(j){
-    if (j && j.data && j.data.url) return j.data.url;
-    throw new Error((j && j.error && j.error.message) || "imgbb error");
-  });
+  return fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (j && j.data && j.data.url) return j.data.url;
+      throw new Error((j && j.error && j.error.message) || "imgbb error");
+    });
 }
 
-/* ===== ПЕРЕКЛЮЧЕНИЕ ВХОД/РЕГИСТРАЦИЯ ===== */
+/* ===== ВХОД/РЕГИСТРАЦИЯ ===== */
 $("switchMode").onclick = function(){
   regMode = !regMode;
   $("regFields").classList.toggle("hidden", !regMode);
   $("authSub").textContent = regMode ? "Регистрация" : "Вход";
   $("doLogin").textContent = regMode ? "Создать аккаунт" : "Войти";
+  $("doLogin").className = regMode ? "btn-alt" : "btn-primary";
   $("switchMode").textContent = regMode ? "Уже есть аккаунт" : "Создать аккаунт";
   $("authMsg").textContent = "";
-  $("doLogin").className = regMode ? "btn-alt" : "btn-primary";
 };
 
-/* ===== ВЫБОР АВАТАРА ПРИ РЕГИСТРАЦИИ ===== */
 $("avatarBtn").onclick = function(){ $("avatarFile").click(); };
 $("avatarFile").onchange = function(ev){
   var f = ev.target.files[0];
@@ -324,7 +306,6 @@ $("avatarFile").onchange = function(ev){
   });
 };
 
-/* ===== ВЫБОР АВАТАРА В ПРОФИЛЕ ===== */
 $("avatarBtn2").onclick = function(){ $("avatarFile2").click(); };
 $("avatarFile2").onchange = function(ev){
   var f = ev.target.files[0];
@@ -335,7 +316,6 @@ $("avatarFile2").onchange = function(ev){
   });
 };
 
-/* ===== ВХОД / РЕГИСТРАЦИЯ ===== */
 $("doLogin").onclick = function(){
   var email = $("emailInput").value.trim();
   var pass = $("passInput").value;
@@ -349,66 +329,53 @@ $("doLogin").onclick = function(){
     return;
   }
 
-  // Регистрация
   var nick = $("nickInput").value.trim();
   var uname = $("userInput").value.trim().toLowerCase().replace(/^@/, "");
   if (!nick){ $("authMsg").textContent = "Введи имя"; return; }
   if (!validUsername(uname)){ $("authMsg").textContent = "username: 3-20 символов, a-z 0-9 _"; return; }
   if (pass.length < 6){ $("authMsg").textContent = "Пароль минимум 6 символов"; return; }
 
-  // проверка свободен ли username
   db.collection("usernames").doc(uname).get().then(function(doc){
-    if (doc.exists){
-      $("authMsg").textContent = "@" + uname + " уже занят";
-      throw new Error("taken");
-    }
+    if (doc.exists){ throw new Error("@" + uname + " уже занят"); }
     return auth.createUserWithEmailAndPassword(email, pass);
   }).then(function(cred){
     var uid = cred.user.uid;
     var avatarUrl = "";
-    // если выбрал фото — грузим в ImgBB
     var chain = pendingAvatar
       ? uploadImgBB(pendingAvatar).then(function(url){ avatarUrl = url; })
       : Promise.resolve();
-
-    return chain.then(function(){
-      // пишем username (замок)
-      return db.collection("usernames").doc(uname).set({
-        uid: uid,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    return chain
+      .then(function(){
+        return db.collection("usernames").doc(uname).set({
+          uid: uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      })
+      .then(function(){
+        return db.collection("users").doc(uid).set({
+          email: email,
+          nickname: nick,
+          username: uname,
+          avatar: avatarUrl,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
       });
-    }).then(function(){
-      // пишем профиль
-      return db.collection("users").doc(uid).set({
-        email: email,
-        nickname: nick,
-        username: uname,
-        avatar: avatarUrl,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
   }).catch(function(e){
-    if (e.message === "taken") return;
     $("authMsg").textContent = e.code ? (e.code + ": " + e.message) : e.message;
   });
 };
 
-/* ===== СОСТОЯНИЕ АВТОРИЗАЦИИ ===== */
+/* ===== СОСТОЯНИЕ ===== */
 auth.onAuthStateChanged(function(user){
   if (!user){
-    me = null;
-    profile = null;
+    me = null; profile = null;
     $("app").classList.add("hidden");
     $("authScreen").classList.remove("hidden");
     return;
   }
   me = user;
   db.collection("users").doc(user.uid).get().then(function(doc){
-    if (!doc.exists){
-      // пользователь без профиля (не через регистрацию) — разлогиним
-      auth.signOut();
-      return;
-    }
+    if (!doc.exists){ auth.signOut(); return; }
     profile = doc.data();
     $("authScreen").classList.add("hidden");
     $("app").classList.remove("hidden");
@@ -439,14 +406,13 @@ function subscribeChats(){
         chats.push(d);
       });
       chats.sort(function(a,b){
-        var ta = a.lastTime ? (a.lastTime.toDate ? a.lastTime.toDate().getTime() : 0) : 0;
-        var tb = b.lastTime ? (b.lastTime.toDate ? b.lastTime.toDate().getTime() : 0) : 0;
+        var ta = a.lastTime && a.lastTime.toDate ? a.lastTime.toDate().getTime() : 0;
+        var tb = b.lastTime && b.lastTime.toDate ? b.lastTime.toDate().getTime() : 0;
         return tb - ta;
       });
       renderChatList();
     }, function(err){
       console.warn("chats:", err);
-      toast("Ошибка чатов: " + err.message);
     });
 }
 
@@ -461,12 +427,10 @@ function renderChatList(){
     var c = chats[i];
     var title = c.title || "Чат";
     if (c.type === "private"){
-      // для личного — имя собеседника
       var other = (c.participants || []).find(function(u){ return u !== me.uid; });
-      title = c.titles && c.titles[other] ? c.titles[other] : "Личный чат";
+      title = (c.titles && c.titles[other]) ? c.titles[other] : "Личный чат";
     }
     var avatar = c.type === "channel" ? "📢" : c.type === "group" ? "👥" : "💬";
-    if (c.avatar) avatar = '<img src="' + c.avatar + '">';
     var last = c.lastMessage || "";
     if (c.lastMessageType === "photo") last = "📷 Фото";
     h += '<div class="chat-item' + (c.id === openChatId ? " active" : "") + '" data-id="' + c.id + '">' +
@@ -480,9 +444,7 @@ function renderChatList(){
   box.innerHTML = h;
   var items = box.querySelectorAll(".chat-item");
   for (var j = 0; j < items.length; j++){
-    items[j].onclick = function(){
-      openChat(this.getAttribute("data-id"));
-    };
+    items[j].onclick = function(){ openChat(this.getAttribute("data-id")); };
   }
 }
 
@@ -507,7 +469,7 @@ function openChat(chatId){
 
   $("main").innerHTML =
     '<div id="mainHeader">' +
-      '<button id="backBtn" style="display:none">←</button>' +
+      '<button id="backBtn" style="display:none;background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:6px 10px;border-radius:6px;font-size:12px">←</button>' +
       '<div style="flex:1">' +
         '<h3>' + esc(title) + '</h3>' +
         '<div class="sub">' + esc(sub) + '</div>' +
@@ -524,7 +486,6 @@ function openChat(chatId){
       : '<div style="padding:14px;text-align:center;color:#8a93a6;font-size:12px;border-top:1px solid #232833">Только админ может писать</div>'
     );
 
-  // адаптив: кнопка назад
   if (window.innerWidth <= 700){
     var bb = $("backBtn");
     bb.style.display = "block";
@@ -562,11 +523,9 @@ function subscribeMessages(chatId){
       m.innerHTML = "";
       snap.forEach(function(doc){
         var d = doc.data();
-        d.id = doc.id;
         var mine = d.from === me.uid;
         var div = document.createElement("div");
         div.className = "msg" + (mine ? " mine" : "");
-        var avatarUrl = d.avatar || "";
         var senderHtml = mine ? "" : '<div class="sender">' + esc(d.nickname || "?") + '</div>';
         var textHtml = d.text ? '<div>' + esc(d.text) + '</div>' : '';
         var photoHtml = d.photoUrl
@@ -578,7 +537,6 @@ function subscribeMessages(chatId){
       });
       m.scrollTop = m.scrollHeight;
     }, function(err){
-      console.warn("messages:", err);
       var m = $("messages");
       if (m) m.innerHTML = '<div style="color:#f87171;font-size:12px">Ошибка: ' + esc(err.message) + '</div>';
     });
@@ -588,12 +546,10 @@ function subscribeMessages(chatId){
 function sendText(){
   var inp = $("msgInput");
   var text = inp.value.trim();
-  if (!text) return;
-  if (!openChatId) return;
+  if (!text || !openChatId) return;
   inp.value = "";
   var chatRef = db.collection("chats").doc(openChatId);
   var msgRef = chatRef.collection("messages").doc();
-
   var now = firebase.firestore.FieldValue.serverTimestamp();
   msgRef.set({
     from: me.uid,
@@ -619,7 +575,6 @@ function sendPhoto(ev){
   if (file.size > 32 * 1024 * 1024){ toast("Фото больше 32 МБ"); return; }
 
   toast("📤 Загрузка фото...");
-  // сжимаем чтобы быстрее
   compressImage(file, 1600, 0.85, function(b64){
     uploadImgBB(b64).then(function(url){
       var chatRef = db.collection("chats").doc(openChatId);
@@ -639,21 +594,14 @@ function sendPhoto(ev){
           lastTime: now
         });
       });
-    }).then(function(){
-      toast("✅ Отправлено");
-    }).catch(function(e){
-      toast("❌ " + e.message);
-    });
+    }).then(function(){ toast("✅ Отправлено"); })
+      .catch(function(e){ toast("❌ " + e.message); });
   });
 }
 
 /* ===== МОДАЛКА НОВОГО ЧАТА ===== */
-$("btnNew").onclick = function(){
-  $("newChatModal").classList.add("show");
-};
-$("closeNewChat").onclick = function(){
-  $("newChatModal").classList.remove("show");
-};
+$("btnNew").onclick = function(){ $("newChatModal").classList.add("show"); };
+$("closeNewChat").onclick = function(){ $("newChatModal").classList.remove("show"); };
 var tabBtns = document.querySelectorAll("#newChatModal .tabs button");
 for (var i = 0; i < tabBtns.length; i++){
   tabBtns[i].onclick = function(){
@@ -676,7 +624,6 @@ $("createPrivate").onclick = function(){
     var otherUid = doc.data().uid;
     if (otherUid === me.uid) throw new Error("Это ты сам");
 
-    // ищем существующий личный чат
     return db.collection("chats")
       .where("type", "==", "private")
       .where("participants", "array-contains", me.uid)
@@ -694,19 +641,16 @@ $("createPrivate").onclick = function(){
           openChat(existing);
           throw new Error("done");
         }
-        // создаём новый
         return db.collection("users").doc(otherUid).get().then(function(otherDoc){
           var otherData = otherDoc.data() || {};
           var now = firebase.firestore.FieldValue.serverTimestamp();
+          var t = {};
+          t[me.uid] = profile.nickname || profile.username;
+          t[otherUid] = otherData.nickname || otherData.username || "User";
           return db.collection("chats").add({
             type: "private",
             participants: [me.uid, otherUid],
-            titles: (function(){
-              var t = {};
-              t[me.uid] = profile.nickname || profile.username;
-              t[otherUid] = otherData.nickname || otherData.username || "User";
-              return t;
-            })(),
+            titles: t,
             lastMessage: "",
             lastMessageType: "text",
             lastTime: now,
@@ -725,15 +669,13 @@ $("createPrivate").onclick = function(){
   });
 };
 
-/* ===== ГРУППА ===== */
+/* ===== ГРУППА И КАНАЛ ===== */
 $("createGroup").onclick = function(){
   var title = $("groupTitle").value.trim();
   var usersStr = $("groupUsers").value.trim();
   if (!title){ toast("Введи название"); return; }
   createMultiUserChat("group", title, usersStr);
 };
-
-/* ===== КАНАЛ ===== */
 $("createChannel").onclick = function(){
   var title = $("channelTitle").value.trim();
   var usersStr = $("channelUsers").value.trim();
@@ -745,7 +687,6 @@ function createMultiUserChat(type, title, usersStr){
   var names = usersStr.split(",").map(function(s){ return s.trim().toLowerCase().replace(/^@/, ""); })
     .filter(function(s){ return s.length > 0; });
 
-  // ищем uid по username
   var uids = [me.uid];
   var titles = {};
   titles[me.uid] = profile.nickname || profile.username;
@@ -795,9 +736,7 @@ $("btnProfile").onclick = function(){
   $("profUsername").value = profile.username || "";
   $("profileModal").classList.add("show");
 };
-$("closeProfile").onclick = function(){
-  $("profileModal").classList.remove("show");
-};
+$("closeProfile").onclick = function(){ $("profileModal").classList.remove("show"); };
 
 $("saveProfile").onclick = function(){
   var nick = $("profNick").value.trim();
@@ -808,7 +747,6 @@ $("saveProfile").onclick = function(){
   var oldUname = profile.username;
   var doSave = function(avatarUrl){
     var chain = Promise.resolve();
-    // если username изменился — освобождаем старый
     if (uname !== oldUname){
       chain = chain
         .then(function(){
@@ -840,14 +778,12 @@ $("saveProfile").onclick = function(){
       $("profileModal").classList.remove("show");
       toast("✅ Сохранено");
     }).catch(function(e){ toast("❌ " + e.message); });
-    return chain;
   };
 
   if (pendingAvatar2){
     toast("📤 Загрузка фото...");
-    uploadImgBB(pendingAvatar2).then(function(url){
-      doSave(url);
-    }).catch(function(e){ toast("❌ фото: " + e.message); });
+    uploadImgBB(pendingAvatar2).then(function(url){ doSave(url); })
+      .catch(function(e){ toast("❌ фото: " + e.message); });
   } else {
     doSave(null);
   }
@@ -859,7 +795,6 @@ $("logoutBtn").onclick = function(){
   auth.signOut();
 };
 
-/* ===== СТАРТ ===== */
 $("app").classList.add("hidden");
 </script>
 </body>
