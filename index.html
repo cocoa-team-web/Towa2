@@ -15,14 +15,13 @@ button{font-family:inherit;cursor:pointer;border:0;outline:none;background:trans
 input,textarea{font-family:inherit;outline:none;border:0;background:transparent;color:inherit}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-thumb{background:#2a303c;border-radius:3px}
-
-/* ЭКРАН ВХОДА */
+</style><style>
 #authScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#0a0c10;z-index:100;overflow-y:auto}
 #authBox{background:#161a22;border:1px solid #2a303c;border-radius:18px;padding:26px 22px;width:100%;max-width:380px}
 #authBox h1{text-align:center;color:#00d2ff;font-size:28px;margin-bottom:4px;letter-spacing:1px}
 #authBox .sub{text-align:center;color:#6b7280;font-size:12px;margin-bottom:20px}
 #authBox label{display:block;font-size:11px;color:#8a93a6;margin-bottom:4px;margin-top:10px}
-#authBox input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a303c;background:#0a0c10;color:#fff;font-size:14px;transition:border .15s}
+#authBox input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a303c;background:#0a0c10;color:#fff;font-size:14px}
 #authBox input:focus{border-color:#00d2ff}
 #authBox button{width:100%;padding:13px;border-radius:10px;font-size:14px;font-weight:600;margin-top:10px}
 .btn-primary{background:#00d2ff;color:#000}
@@ -36,22 +35,34 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 #avatarPreview img{width:100%;height:100%;object-fit:cover}
 #avatarBtn{background:#1e232e;color:#d0d5de;border:1px solid #2a303c;padding:9px 14px;border-radius:10px;font-size:12px;width:auto;margin-top:0}
 
-/* ОСНОВНОЙ */
 #app{display:flex;height:100vh;width:100%}
 #sidebar{width:340px;background:#12151c;border-right:1px solid #1e232e;display:flex;flex-direction:column;flex-shrink:0}
 #sidebarHeader{padding:12px 14px;border-bottom:1px solid #1e232e;display:flex;align-items:center;gap:8px}
 #sidebarHeader h2{font-size:17px;color:#00d2ff;flex:1;letter-spacing:.5px}
 #sidebarHeader button{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:7px 11px;border-radius:8px;font-size:12px}
-#meBadge{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0a0c10;border-bottom:1px solid #1e232e;font-size:13px}
+#meBadge{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0a0c10;border-bottom:1px solid #1e232e;font-size:13px;cursor:pointer}
 #meAvatar{width:36px;height:36px;border-radius:50%;background:#1e232e;border:1px solid #2a303c;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:18px}
 #meAvatar img{width:100%;height:100%;object-fit:cover}
 #meInfo{flex:1;min-width:0}
 #meNick{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #meUsername{color:#00d2ff;font-size:11px}
+#meFire{display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#f59e0b,#ef4444);padding:5px 10px;border-radius:12px;font-size:12px;font-weight:800;color:#fff;white-space:nowrap;flex-shrink:0}
 #searchBox{padding:8px 12px;background:#0a0c10;border-bottom:1px solid #1e232e}
 #searchInput{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #1e232e;background:#12151c;color:#fff;font-size:13px}
 #searchInput:focus{border-color:#00d2ff}
 #chatList{flex:1;overflow-y:auto}
+</style><style>
+.search-section{padding:8px 14px;font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;font-weight:700;background:#0a0c10}
+.search-item{padding:10px 14px;border-bottom:1px solid #1a1f28;cursor:pointer;display:flex;gap:10px;align-items:center}
+.search-item:hover{background:#161a22}
+.search-item .avatar{width:40px;height:40px;border-radius:50%;background:#1e232e;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0}
+.search-item .avatar img{width:100%;height:100%;object-fit:cover}
+.search-item .info{flex:1;min-width:0}
+.search-item .title{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-item .sub{font-size:11.5px;color:#8a93a6}
+.search-item .join{background:#00d2ff;color:#000;font-size:11px;font-weight:700;padding:6px 12px;border-radius:14px}
+.search-item .joined{background:transparent;border:1px solid #2a303c;color:#8a93a6;font-size:11px;padding:6px 12px;border-radius:14px}
+
 .chat-item{padding:10px 14px;border-bottom:1px solid #1a1f28;cursor:pointer;display:flex;gap:10px;align-items:center}
 .chat-item:hover{background:#161a22}
 .chat-item.active{background:#1a2a3a;border-left:3px solid #00d2ff}
@@ -64,9 +75,9 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 
 #main{flex:1;display:flex;flex-direction:column;background:#0a0c10;min-width:0}
 #mainHeader{padding:12px 16px;border-bottom:1px solid #1e232e;display:flex;align-items:center;gap:12px;background:#12151c}
-#mainHeader .chat-avatar{width:40px;height:40px;font-size:18px}
-#mainHeader h3{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#mainHeader .sub{font-size:11px;color:#8a93a6;margin-top:2px}
+#mainHeader .chat-avatar{width:40px;height:40px;font-size:18px;cursor:pointer}
+#mainHeader h3{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#mainHeader .sub{font-size:11px;color:#8a93a6;margin-top:2px;cursor:pointer}
 #mainHeader button{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:7px 11px;border-radius:8px;font-size:12px}
 #backBtn{display:none}
 
@@ -89,25 +100,108 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 
 #empty{flex:1;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;flex-direction:column;gap:10px;padding:20px;text-align:center}
 #empty .big{font-size:80px;opacity:.5}
-
-/* МОДАЛКИ */
+</style><style>
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:200}
 .modal.show{display:flex}
 .modal-box{background:#161a22;border-radius:16px;padding:22px;width:100%;max-width:420px;border:1px solid #2a303c;max-height:90vh;overflow-y:auto}
 .modal-box h3{color:#00d2ff;font-size:17px;margin-bottom:14px;font-weight:600}
 .modal-box label{display:block;font-size:11px;color:#8a93a6;margin-bottom:4px;margin-top:8px}
-.modal-box input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a303c;background:#0a0c10;color:#fff;font-size:14px}
-.modal-box input:focus{border-color:#00d2ff}
-.modal-box button{width:100%;padding:12px;border-radius:10px;font-weight:600;font-size:14px;margin-top:8px}
+.modal-box input,.modal-box select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a303c;background:#0a0c10;color:#fff;font-size:14px}
+.modal-box input:focus,.modal-box select:focus{border-color:#00d2ff}
+.modal-box button.wide{width:100%;padding:12px;border-radius:10px;font-weight:600;font-size:14px;margin-top:8px}
 .modal-actions{display:flex;gap:8px;margin-top:8px}
 .modal-actions button{flex:1}
 .tabs{display:flex;gap:4px;margin-bottom:14px;background:#0a0c10;padding:4px;border-radius:10px}
 .tabs button{flex:1;background:transparent;border:0;color:#8a93a6;padding:9px;border-radius:8px;font-size:12px;font-weight:600}
 .tabs button.active{background:#00d2ff;color:#000}
 
+.chat-profile-avatar{width:100px;height:100px;border-radius:50%;background:#0a0c10;border:3px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden;margin:0 auto 12px}
+.chat-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-profile-title{text-align:center;font-size:20px;font-weight:700;margin-bottom:4px}
+.chat-profile-username{text-align:center;font-size:13px;color:#00d2ff;margin-bottom:4px}
+.chat-profile-type{text-align:center;font-size:12px;color:#8a93a6;margin-bottom:16px}
+.chat-profile-stats{display:flex;justify-content:center;gap:20px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #1e232e}
+.chat-profile-stats > div{text-align:center}
+.chat-profile-stats .num{font-size:18px;font-weight:700;color:#00d2ff}
+.chat-profile-stats .lbl{font-size:11px;color:#8a93a6;margin-top:2px}
+.chat-members-title{font-size:12px;color:#8a93a6;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px}
+.chat-member{display:flex;gap:12px;align-items:center;padding:8px 4px;border-radius:10px;cursor:pointer}
+.chat-member:hover{background:#1e232e}
+.chat-member .avatar{width:40px;height:40px;border-radius:50%;background:#1e232e;border:1px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;position:relative}
+.chat-member .avatar img{width:100%;height:100%;object-fit:cover}
+.chat-member .avatar .online-dot{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;background:#4ade80;border:2px solid #161a22;border-radius:50%}
+.chat-member .info{flex:1;min-width:0}
+.chat-member .name{font-size:13.5px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.chat-member .uname{font-size:11.5px;color:#00d2ff}
+.chat-member .crown{color:#fbbf24;font-size:12px}
+
+.fire-balance{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-weight:800;font-size:20px;padding:14px;border-radius:14px;margin-bottom:14px}
+.fire-balance .icon{font-size:26px}
+.fire-balance .label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.9}
+#fireGrantBtn{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-weight:800;width:100%;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
+.fire-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.fire-quick button{flex:1;min-width:60px;background:#1e232e;border:1px solid #2a303c;color:#d0d5de;padding:8px;border-radius:8px;font-size:12px;font-weight:600}
+
+.gifts-title{font-size:12px;color:#8a93a6;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin:16px 0 8px}
+.gifts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}
+.gift-card{background:#0a0c10;border:1px solid #2a303c;border-radius:14px;padding:10px;text-align:center;position:relative;cursor:pointer}
+.gift-card .gift-icon{font-size:38px;line-height:1;margin-bottom:6px;display:flex;align-items:center;justify-content:center;height:44px}
+.gift-card .gift-icon img{max-width:44px;max-height:44px;border-radius:8px}
+.gift-card .gift-name{font-size:11.5px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gift-card .gift-price{font-size:11px;color:#fbbf24;font-weight:700}
+.gift-card.rare{border-color:#3b82f6}
+.gift-card.epic{border-color:#a855f7;box-shadow:0 0 12px rgba(168,85,247,.3)}
+.gift-card.legendary{border-color:#f59e0b;box-shadow:0 0 16px rgba(245,158,11,.4)}
+.gift-rarity{position:absolute;top:6px;right:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;text-transform:uppercase}
+.gift-rarity.common{background:#374151;color:#d1d5db}
+.gift-rarity.rare{background:#1e40af;color:#93c5fd}
+.gift-rarity.epic{background:#6b21a8;color:#e9d5ff}
+.gift-rarity.legendary{background:#92400e;color:#fcd34d}
+#giftSendBtn{background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;font-weight:700;width:100%;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
+#fireGrantBtnChat{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-weight:800;width:100%;padding:12px;border-radius:10px;margin-top:10px}
+#giftSelfBtn{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;font-weight:700;width:100%;padding:12px;border-radius:10px;margin-top:10px}
+
+#shopBtn{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:7px 11px;border-radius:8px;font-size:12px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:14px}
+.shop-card{background:#0a0c10;border:2px solid #2a303c;border-radius:14px;padding:12px;text-align:center;position:relative;display:flex;flex-direction:column;gap:6px}
+.shop-card.rare{border-color:#3b82f6}
+.shop-card.epic{border-color:#a855f7;box-shadow:0 0 14px rgba(168,85,247,.3)}
+.shop-card.legendary{border-color:#f59e0b;box-shadow:0 0 18px rgba(245,158,11,.45)}
+.shop-card .gift-icon{font-size:44px;line-height:1;height:52px;display:flex;align-items:center;justify-content:center}
+.shop-card .gift-icon img{max-width:52px;max-height:52px;border-radius:10px}
+.shop-card .gift-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shop-card .gift-rarity-label{font-size:10px;font-weight:800;text-transform:uppercase}
+.shop-card .gift-rarity-label.common{color:#9ca3af}
+.shop-card .gift-rarity-label.rare{color:#93c5fd}
+.shop-card .gift-rarity-label.epic{color:#e9d5ff}
+.shop-card .gift-rarity-label.legendary{color:#fcd34d}
+.shop-card .gift-price{font-size:15px;font-weight:800;color:#fbbf24}
+.shop-card .buy-btn{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-weight:700;padding:9px;border-radius:9px;font-size:13px;margin-top:4px}
+.shop-card .del-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(220,38,38,.9);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+#shopAddBtn{background:#2563eb;color:#fff;font-weight:700;padding:10px 16px;border-radius:10px;font-size:13px;margin-top:14px;width:100%}
+
+.gift-img-preview{width:80px;height:80px;border-radius:12px;background:#0a0c10;border:2px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;margin:8px auto;cursor:pointer}
+.gift-img-preview img{width:100%;height:100%;object-fit:cover}
+.gift-upload-row{display:flex;gap:6px;align-items:center;margin:6px 0}
+.gift-upload-row button{background:#1e232e;color:#d0d5de;border:1px solid #2a303c;padding:8px 12px;border-radius:8px;font-size:12px;flex:1}
+.templates-title{font-size:11px;color:#8a93a6;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin:12px 0 6px}
+.templates-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.template-chip{flex-shrink:0;background:#0a0c10;border:1px solid #2a303c;border-radius:10px;padding:8px 12px;font-size:12px;color:#d0d5de;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.template-chip .del-t{margin-left:4px;color:#f87171;font-size:11px;padding:2px 4px;border-radius:4px}
+
+#confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:9998;display:none}
+#confettiCanvas.show{display:block}
+.gift-notification{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;padding:14px 22px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 10px 40px rgba(168,85,247,.6);z-index:9999;display:none;align-items:center;gap:10px}
+.gift-notification.show{display:flex}
+.gift-notification .g-icon{font-size:32px}
+.gift-notification .g-name{font-size:11px;opacity:.9}
+#giftCooldown{font-size:12px;color:#fbbf24;text-align:center;margin-top:8px;min-height:16px}
+#giftCreateSend:disabled{opacity:.5;cursor:not-allowed}
+
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#161a22;color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;z-index:999;display:none;font-size:13px;max-width:90%;border:1px solid #2a303c;text-align:center}
 .toast.show{display:block}
 .toast.error{border-color:#f87171;color:#f87171}
+.toast.success{border-color:#4ade80;color:#4ade80}
 
 @media (max-width:760px){
   #app{flex-direction:column}
@@ -118,29 +212,22 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
   #backBtn{display:flex!important}
 }
 </style>
-</head>
-<body>
+</head><body>
 
-<!-- ЭКРАН ВХОДА -->
 <div id="authScreen">
   <div id="authBox">
     <h1>💬 Towa</h1>
     <div class="sub" id="authSub">Вход</div>
-
     <label>Email</label>
-    <input id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
-
+    <input id="emailInput" type="email" placeholder="you@example.com">
     <label>Пароль</label>
-    <input id="passInput" type="password" placeholder="••••••" autocomplete="current-password">
-
+    <input id="passInput" type="password" placeholder="••••••">
     <div id="regFields" class="hidden">
       <label>Имя</label>
       <input id="nickInput" type="text" placeholder="Как тебя зовут" maxlength="24">
-
       <label>@username</label>
       <input id="userInput" type="text" placeholder="flower" maxlength="20">
       <div class="usernameHint">3–20 символов: a–z, 0–9, _</div>
-
       <label>Фото профиля</label>
       <div id="avatarRow">
         <div id="avatarPreview">👤</div>
@@ -148,18 +235,17 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
         <input id="avatarFile" type="file" accept="image/*" style="display:none">
       </div>
     </div>
-
     <button id="doLogin" class="btn-primary">Войти</button>
     <button id="switchMode" class="btn-alt">Создать аккаунт</button>
     <div id="authMsg"></div>
   </div>
 </div>
 
-<!-- ОСНОВНОЙ -->
 <div id="app" class="hidden">
   <div id="sidebar">
     <div id="sidebarHeader">
       <h2>💬 Towa</h2>
+      <button id="shopBtn">🛍</button>
       <button id="btnNew">+ Чат</button>
       <button id="btnProfile">👤</button>
     </div>
@@ -169,22 +255,17 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
         <div id="meNick">—</div>
         <div id="meUsername">@—</div>
       </div>
+      <div id="meFire">🔥 <span id="meFireCount">0</span></div>
     </div>
     <div id="searchBox">
-      <input id="searchInput" type="text" placeholder="🔍 Поиск чатов...">
+      <input id="searchInput" type="text" placeholder="🔍 Поиск чатов и людей...">
     </div>
     <div id="chatList"></div>
   </div>
   <div id="main">
-    <div id="empty">
-      <div class="big">💬</div>
-      <div>Выбери чат или создай новый</div>
-    </div>
+    <div id="empty"><div class="big">💬</div><div>Выбери чат или создай новый</div></div>
   </div>
-</div>
-
-<!-- НОВЫЙ ЧАТ -->
-<div class="modal" id="newChatModal">
+</div><div class="modal" id="newChatModal">
   <div class="modal-box">
     <h3>Создать</h3>
     <div class="tabs">
@@ -192,34 +273,41 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
       <button data-tab="group">👥 Группа</button>
       <button data-tab="channel">📢 Канал</button>
     </div>
-
     <div id="privateTab">
       <label>@username собеседника</label>
       <input id="privateUsername" placeholder="@username" maxlength="20">
-      <button id="createPrivate" class="btn-primary">Открыть чат</button>
+      <button id="createPrivate" class="btn-primary wide">Открыть чат</button>
     </div>
-
     <div id="groupTab" class="hidden">
       <label>Название</label>
       <input id="groupTitle" placeholder="Друзья" maxlength="40">
+      <label>Публичный @username (необязательно)</label>
+      <input id="groupUsername" placeholder="mygroup" maxlength="20">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer">
+        <input id="groupPublic" type="checkbox" style="width:auto">
+        <span style="font-size:13px">Публичная группа</span>
+      </label>
       <label>@username через запятую</label>
       <input id="groupUsers" placeholder="@user1, @user2">
-      <button id="createGroup" class="btn-primary">Создать группу</button>
+      <button id="createGroup" class="btn-primary wide">Создать группу</button>
     </div>
-
     <div id="channelTab" class="hidden">
       <label>Название</label>
       <input id="channelTitle" placeholder="Новости" maxlength="40">
+      <label>Публичный @username (необязательно)</label>
+      <input id="channelUsername" placeholder="mychannel" maxlength="20">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer">
+        <input id="channelPublic" type="checkbox" style="width:auto">
+        <span style="font-size:13px">Публичный канал</span>
+      </label>
       <label>@username через запятую</label>
       <input id="channelUsers" placeholder="@user1, @user2">
-      <button id="createChannel" class="btn-primary">Создать канал</button>
+      <button id="createChannel" class="btn-primary wide">Создать канал</button>
     </div>
-
-    <button id="closeNewChat" class="btn-alt">Отмена</button>
+    <button id="closeNewChat" class="btn-alt wide">Отмена</button>
   </div>
 </div>
 
-<!-- ПРОФИЛЬ -->
 <div class="modal" id="profileModal">
   <div class="modal-box">
     <h3>Профиль</h3>
@@ -232,35 +320,181 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
     <input id="profNick" placeholder="Имя">
     <label>@username</label>
     <input id="profUsername" placeholder="@username">
-    <div class="usernameHint">Смена @username освободит старый</div>
+    <div class="fire-balance" style="margin-top:14px">
+      <span class="icon">🔥</span>
+      <div>
+        <div style="font-size:26px" id="myFireBalance">0</div>
+        <div class="label">Огоньков</div>
+      </div>
+    </div>
+    <div class="gifts-title">🎁 Мои подарки</div>
+    <div id="myGiftsContainer"></div>
+    <button id="giftSelfBtn" class="hidden">🎁 Подарить себе подарок</button>
+    <div id="sentGiftsSection" class="hidden">
+      <div class="gifts-title">📤 Отправленные</div>
+      <div id="sentGiftsContainer"></div>
+    </div>
+    <div id="fireGrantSection" class="hidden" style="margin-top:16px;padding-top:16px;border-top:1px solid #1e232e">
+      <div class="gifts-title" style="color:#fbbf24">🔥 Выдать огоньки</div>
+      <label>Количество</label>
+      <input id="fireGrantAmount" type="number" placeholder="100" min="1" value="100">
+      <div class="fire-quick">
+        <button data-amt="10">10</button>
+        <button data-amt="50">50</button>
+        <button data-amt="100">100</button>
+        <button data-amt="500">500</button>
+        <button data-amt="1000">1000</button>
+      </div>
+      <button id="fireGrantBtn">🔥 Выдать</button>
+    </div>
     <div class="modal-actions">
       <button id="saveProfile" class="btn-primary">Сохранить</button>
       <button id="logoutBtn" class="btn-alt">Выйти</button>
     </div>
-    <button id="closeProfile" class="btn-alt">Закрыть</button>
+    <button id="closeProfile" class="btn-alt wide">Закрыть</button>
+  </div>
+</div><div class="modal" id="chatProfileModal">
+  <div class="modal-box">
+    <div id="chatProfileBody"></div>
+    <button id="closeChatProfile" class="btn-alt wide">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="fireGrantModal">
+  <div class="modal-box">
+    <h3>🔥 Выдать огоньки</h3>
+    <div style="font-size:12px;color:#8a93a6;margin-bottom:12px">
+      Получатель: <b id="fireGrantTargetName" style="color:#00d2ff">—</b><br>
+      Текущий: <b style="color:#fbbf24">🔥 <span id="fireGrantCurrent">0</span></b>
+    </div>
+    <label>Сколько выдать</label>
+    <input id="fireGrantAmount2" type="number" min="1" value="100">
+    <div class="fire-quick">
+      <button data-amt="10">+10</button>
+      <button data-amt="50">+50</button>
+      <button data-amt="100">+100</button>
+      <button data-amt="500">+500</button>
+      <button data-amt="1000">+1000</button>
+    </div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button id="fireGrantConfirm" class="btn-primary">🔥 Выдать</button>
+      <button id="fireGrantCancel" class="btn-alt">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+<div class="gift-notification" id="giftNotification">
+  <div class="g-icon" id="giftNotifIcon">🎁</div>
+  <div>
+    <div id="giftNotifTitle">Подарок!</div>
+    <div class="g-name" id="giftNotifSub"></div>
+  </div>
+</div><div class="modal" id="giftSendModal">
+  <div class="modal-box">
+    <h3>🎁 Подарить подарок</h3>
+    <div style="font-size:12px;color:#8a93a6;margin-bottom:12px">Получатель: <b id="giftTargetName" style="color:#00d2ff"></b></div>
+    <div class="templates-title">📌 Мои шаблоны</div>
+    <div class="templates-row" id="giftTemplates"></div>
+    <div class="templates-title">📦 Готовые подарки</div>
+    <div id="giftList" class="gifts-grid"></div>
+    <div class="templates-title" style="margin-top:16px">✏️ Свой подарок</div>
+    <div class="gift-img-preview" id="giftPreview">🎁</div>
+    <div class="gift-upload-row">
+      <button id="giftUploadBtn" type="button">📷 Загрузить</button>
+      <button id="giftClearImgBtn" type="button">✕ Убрать</button>
+    </div>
+    <input id="giftImgFile" type="file" accept="image/*" style="display:none">
+    <label>Название</label>
+    <input id="giftCustomName" placeholder="Мишка" maxlength="30">
+    <label>Иконка</label>
+    <input id="giftCustomIcon" placeholder="🎁" maxlength="4">
+    <label>Редкость</label>
+    <select id="giftCustomRarity">
+      <option value="common">Обычный</option>
+      <option value="rare">Редкий</option>
+      <option value="epic">Эпический</option>
+      <option value="legendary">Легендарный</option>
+    </select>
+    <label>Стоимость 🔥</label>
+    <input id="giftCustomPrice" type="number" min="1" value="100">
+    <div id="giftCooldown"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button id="giftSaveTemplate" class="btn-alt">💾 Сохранить шаблон</button>
+    </div>
+    <div class="modal-actions">
+      <button id="giftCreateSend" class="btn-primary">🎁 Создать и подарить</button>
+      <button id="giftCancel" class="btn-alt">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="giftViewModal">
+  <div class="modal-box" style="max-width:340px">
+    <div id="giftViewBody"></div>
+    <button id="giftViewClose" class="btn-alt wide">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="shopModal">
+  <div class="modal-box" style="max-width:500px">
+    <h3>🛍 Магазин</h3>
+    <div style="font-size:12px;color:#8a93a6;margin-bottom:10px">
+      Баланс: <b style="color:#fbbf24">🔥 <span id="shopMyBalance">0</span></b>
+    </div>
+    <div id="shopList" class="shop-grid"></div>
+    <button id="shopAddBtn" class="hidden">+ Добавить в магазин</button>
+    <button id="shopClose" class="btn-alt wide" style="margin-top:14px">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="shopAddModal">
+  <div class="modal-box">
+    <h3>➕ Добавить в магазин</h3>
+    <label>Название</label>
+    <input id="shopGiftName" placeholder="Золотой кот" maxlength="30">
+    <label>Иконка</label>
+    <input id="shopGiftIcon" placeholder="🐱" maxlength="4">
+    <label>Редкость</label>
+    <select id="shopGiftRarity">
+      <option value="common">Обычный</option>
+      <option value="rare">Редкий</option>
+      <option value="epic">Эпический</option>
+      <option value="legendary">Легендарный</option>
+    </select>
+    <label>Цена 🔥</label>
+    <input id="shopGiftPrice" type="number" min="1" value="100">
+    <div class="modal-actions" style="margin-top:14px">
+      <button id="shopGiftSave" class="btn-primary">💾 Сохранить</button>
+      <button id="shopGiftCancel" class="btn-alt">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="shopBuyModal">
+  <div class="modal-box">
+    <h3>🎁 Купить</h3>
+    <div id="shopBuyPreview" style="text-align:center;margin:12px 0"></div>
+    <label>Кому подарить?</label>
+    <input id="shopBuyRecipient" placeholder="@username (пусто = себе)" maxlength="20">
+    <div class="modal-actions" style="margin-top:14px">
+      <button id="shopBuyConfirm" class="btn-primary">🎁 Купить</button>
+      <button id="shopBuyCancel" class="btn-alt">Отмена</button>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div><script>
-/* Перехват ошибок */
 window.onerror = function(msg, url, line){
   var box = document.getElementById("authMsg");
-  if (box){
-    box.textContent = "⚠ JS: " + msg + "\n(строка " + line + ")";
-    box.className = "";
-  }
+  if (box){ box.textContent = "⚠ JS: " + msg + " (строка " + line + ")"; box.className = ""; }
   console.error("JS error:", msg, "line", line);
 };
 window.addEventListener("unhandledrejection", function(e){
   var box = document.getElementById("authMsg");
-  if (box){
-    box.textContent = "⚠ Promise: " + (e.reason && e.reason.message ? e.reason.message : e.reason);
-    box.className = "";
-  }
-  console.error("Promise:", e.reason);
+  if (box){ box.textContent = "⚠ Promise: " + (e.reason && e.reason.message ? e.reason.message : e.reason); box.className = ""; }
 });
 
-/* Конфиг Firebase */
 var firebaseConfig = {
   apiKey: "AIzaSyB44sV-thaBp8qKLdfZFm-DfzcJoxpa2j0",
   authDomain: "towaserver-d69a8.firebaseapp.com",
@@ -274,19 +508,21 @@ var auth = firebase.auth();
 var db = firebase.firestore();
 
 var IMGBB_KEY = "0f26cbc872184d305fcf99072a137c35";
+var OWNER_EMAIL = "flowersonickmer87@gmail.com";
 
-/* Состояние */
 var me = null, profile = null;
 var chats = [], openChatId = null, openChatData = null;
-var msgUnsub = null, chatsUnsub = null, typingUnsub = null;
+var msgUnsub = null, chatsUnsub = null, typingUnsub = null, incomingGiftsUnsub = null;
 var pendingAvatar = null, pendingAvatar2 = null;
 var regMode = false, currentTab = "private";
 var chatSearchQuery = "";
 var markedRead = {};
-var lastTypingSent = 0;
-var audioCtx = null;
-
-/* Утилиты */
+var replyTo = null;
+var pendingGiftImage = null;
+var giftSending = false, fireGranting = false, shopBuying = false;
+var lastGiftTime = 0, GIFT_COOLDOWN_MS = 30000;
+var audioCtx = null, shopInitialized = false, shopItems = [];
+</script><script>
 function $(id){ return document.getElementById(id); }
 function on(id, ev, fn){ var el = $(id); if (el) el.addEventListener(ev, fn); }
 function setText(el, text){ if (el) el.textContent = text; }
@@ -295,19 +531,14 @@ function toast(m, type){
   var t = $("toast");
   if (!t) return;
   t.textContent = m;
-  t.className = "toast show" + (type === "error" ? " error" : "");
+  t.className = "toast show" + (type === "error" ? " error" : type === "success" ? " success" : "");
   clearTimeout(t._t);
   t._t = setTimeout(function(){ t.classList.remove("show"); }, 2400);
 }
 
 function esc(s){
   if (s == null) return "";
-  return String(s)
-    .split("&").join("&amp;")
-    .split(String.fromCharCode(60)).join("&lt;")
-    .split(String.fromCharCode(62)).join("&gt;")
-    .split('"').join("&quot;")
-    .split("'").join("&#39;");
+  return String(s).split("&").join("&amp;").split(String.fromCharCode(60)).join("&lt;").split(String.fromCharCode(62)).join("&gt;").split('"').join("&quot;").split("'").join("&#39;");
 }
 
 function findOther(parts, uid){
@@ -331,25 +562,13 @@ function fmtTime(ts){
   return d.toLocaleDateString("ru-RU", {day:"numeric", month:"short"});
 }
 
-function validUsername(u){
-  return /^[a-zA-Z0-9_]{3,20}$/.test(u);
-}
+function validUsername(u){ return /^[a-zA-Z0-9_]{3,20}$/.test(u); }
 
-function beep(){
-  try{
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    var osc = audioCtx.createOscillator();
-    var gain = audioCtx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = 660;
-    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-  }catch(e){}
+function isOwner(){
+  if (!me) return false;
+  return (me.email || "").toLowerCase() === OWNER_EMAIL.toLowerCase();
 }
-
+</script><script>
 function compressImage(file, maxSize, quality, cb){
   var reader = new FileReader();
   reader.onload = function(e){
@@ -381,7 +600,27 @@ function uploadImgBB(base64){
     });
 }
 
-/* Режим */
+function playGiftSound(){
+  try{
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var notes = [523.25, 659.25, 783.99];
+    var startTime = audioCtx.currentTime;
+    notes.forEach(function(freq, i){
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      var t = startTime + i * 0.12;
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + 0.4);
+    });
+  }catch(e){}
+}
+</script><script>
 on("switchMode", "click", function(){
   regMode = !regMode;
   $("regFields").classList.toggle("hidden", !regMode);
@@ -389,37 +628,30 @@ on("switchMode", "click", function(){
   setText($("doLogin"), regMode ? "Создать аккаунт" : "Войти");
   $("doLogin").className = regMode ? "btn-alt" : "btn-primary";
   setText($("switchMode"), regMode ? "У меня уже есть аккаунт" : "Создать аккаунт");
-  $("authMsg").textContent = "";
-  $("authMsg").className = "";
+  $("authMsg").textContent = ""; $("authMsg").className = "";
 });
 
-/* Аватары */
 on("avatarBtn", "click", function(){ $("avatarFile").click(); });
 on("avatarFile", "change", function(ev){
-  var f = ev.target.files[0];
-  if (!f) return;
+  var f = ev.target.files[0]; if (!f) return;
   compressImage(f, 256, 0.85, function(b64){
     pendingAvatar = b64;
     $("avatarPreview").innerHTML = '<img src="' + b64 + '">';
   });
 });
-
 on("avatarBtn2", "click", function(){ $("avatarFile2").click(); });
 on("avatarFile2", "change", function(ev){
-  var f = ev.target.files[0];
-  if (!f) return;
+  var f = ev.target.files[0]; if (!f) return;
   compressImage(f, 256, 0.85, function(b64){
     pendingAvatar2 = b64;
     $("avatarPreview2").innerHTML = '<img src="' + b64 + '">';
   });
 });
 
-/* Вход */
 on("doLogin", "click", function(){
   var email = $("emailInput").value.trim();
   var pass = $("passInput").value;
   $("authMsg").textContent = ""; $("authMsg").className = "";
-
   if (!email || !pass){ $("authMsg").textContent = "Заполни email и пароль"; return; }
 
   if (!regMode){
@@ -432,7 +664,7 @@ on("doLogin", "click", function(){
   var nick = $("nickInput").value.trim();
   var uname = $("userInput").value.trim().toLowerCase().replace(/^@/, "");
   if (!nick){ $("authMsg").textContent = "Введи имя"; return; }
-  if (!validUsername(uname)){ $("authMsg").textContent = "@username: 3-20 символов, латиница и цифры"; return; }
+  if (!validUsername(uname)){ $("authMsg").textContent = "@username: 3-20 символов, латиница"; return; }
   if (pass.length < 6){ $("authMsg").textContent = "Пароль минимум 6 символов"; return; }
 
   $("authMsg").textContent = "Проверяю @username...";
@@ -451,19 +683,14 @@ on("doLogin", "click", function(){
     return chain
       .then(function(){
         return db.collection("usernames").doc(uname).set({
-          uid: uid,
-          username: uname,
+          uid: uid, username: uname,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       })
       .then(function(){
         return db.collection("users").doc(uid).set({
-          uid: uid,
-          email: email,
-          nickname: nick,
-          username: uname,
-          avatar: avatarUrl,
-          online: true,
+          uid: uid, email: email, nickname: nick, username: uname, avatar: avatarUrl,
+          online: true, fire: 0,
           lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -477,17 +704,15 @@ on("doLogin", "click", function(){
   });
 });
 
-on("passInput", "keydown", function(e){
-  if (e.key === "Enter") $("doLogin").click();
-});
+on("passInput", "keydown", function(e){ if (e.key === "Enter") $("doLogin").click(); });
 
-/* Состояние */
 auth.onAuthStateChanged(function(user){
   if (!user){
     me = null; profile = null;
     if (chatsUnsub){ chatsUnsub(); chatsUnsub = null; }
     if (msgUnsub){ msgUnsub(); msgUnsub = null; }
     if (typingUnsub){ typingUnsub(); typingUnsub = null; }
+    if (incomingGiftsUnsub){ incomingGiftsUnsub(); incomingGiftsUnsub = null; }
     $("app").classList.add("hidden");
     $("authScreen").classList.remove("hidden");
     return;
@@ -498,18 +723,16 @@ auth.onAuthStateChanged(function(user){
     profile = doc.data();
     $("authScreen").classList.add("hidden");
     $("app").classList.remove("hidden");
-    renderMe();
-    subscribeChats();
-    markOnline();
+    renderMe(); subscribeChats(); markOnline();
+    loadMyFire(); subscribeIncomingGifts(); initShop();
   });
 });
 
 function markOnline(){
   if (!me) return;
   db.collection("users").doc(me.uid).update({
-    online: true,
-    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-  }).catch(function(e){ console.warn("online:", e); });
+    online: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(function(){});
   setInterval(function(){
     if (!me) return;
     db.collection("users").doc(me.uid).update({
@@ -523,52 +746,54 @@ function renderMe(){
   setText($("meNick"), profile.nickname || "—");
   setText($("meUsername"), "@" + (profile.username || "—"));
   var av = $("meAvatar");
-  if (av){
-    av.innerHTML = profile.avatar ? '<img src="' + profile.avatar + '">' : "👤";
-  }
+  if (av) av.innerHTML = profile.avatar ? '<img src="' + profile.avatar + '">' : "👤";
+  var f = $("meFireCount");
+  if (f) f.textContent = profile.fire || 0;
+}
+
+function loadMyFire(){
+  if (!me) return;
+  db.collection("users").doc(me.uid).get().then(function(doc){
+    if (!doc.exists) return;
+    var bal = doc.data().fire || 0;
+    if ($("myFireBalance")) $("myFireBalance").textContent = bal;
+    if ($("meFireCount")) $("meFireCount").textContent = bal;
+    if (profile) profile.fire = bal;
+  }).catch(function(){});
 }
 </script><script>
-/* Список чатов */
 function subscribeChats(){
   if (chatsUnsub){ chatsUnsub(); chatsUnsub = null; }
   chatsUnsub = db.collection("chats")
     .where("participants", "array-contains", me.uid)
     .onSnapshot(function(snap){
       chats = [];
-      snap.forEach(function(doc){
-        var d = doc.data();
-        d.id = doc.id;
-        chats.push(d);
-      });
+      snap.forEach(function(doc){ var d = doc.data(); d.id = doc.id; chats.push(d); });
       chats.sort(function(a,b){
         var ta = a.lastTime && a.lastTime.toDate ? a.lastTime.toDate().getTime() : 0;
         var tb = b.lastTime && b.lastTime.toDate ? b.lastTime.toDate().getTime() : 0;
         return tb - ta;
       });
       renderChatList();
-      for (var i = 0; i < chats.length; i++){
-        if (chats[i].id === openChatId) openChatData = chats[i];
-      }
-    }, function(err){
-      console.warn("chats:", err);
-    });
+      for (var i = 0; i < chats.length; i++) if (chats[i].id === openChatId) openChatData = chats[i];
+    }, function(err){ console.warn("chats:", err); });
 }
 
 function renderChatList(){
   var box = $("chatList");
   if (!box) return;
   var q = chatSearchQuery.toLowerCase().trim();
+  if (q && q.length >= 2){ renderGlobalSearch(q); return; }
   var filtered = chats;
   if (q){
     filtered = chats.filter(function(c){
-      var t = (c.title || "").toLowerCase();
-      var lm = (c.lastMessage || "").toLowerCase();
-      return t.indexOf(q) >= 0 || lm.indexOf(q) >= 0;
+      return (c.title || "").toLowerCase().indexOf(q) >= 0 ||
+             (c.lastMessage || "").toLowerCase().indexOf(q) >= 0;
     });
   }
   if (!filtered.length){
     box.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#6b7280;font-size:13px">' +
-      (q ? "🔍 Ничего не найдено" : "💬 Нет чатов<br><br>Нажми + Чат") + '</div>';
+      (q ? "🔍 Ничего не найдено" : "💬 Нет чатов") + '</div>';
     return;
   }
   var h = "";
@@ -576,48 +801,175 @@ function renderChatList(){
     var c = filtered[i];
     var title = c.title || "Чат";
     var avatar = c.type === "channel" ? "📢" : c.type === "group" ? "👥" : "💬";
-
     if (c.type === "private"){
       var other = findOther(c.participants, me.uid);
       title = (c.titles && c.titles[other]) ? c.titles[other] : "Личный чат";
     }
-
     var last = c.lastMessage || "";
     if (c.lastMessageType === "photo") last = "📷 Фото";
     if (!last) last = "Нет сообщений";
     var prefix = (c.lastFrom === me.uid) ? '<span style="color:#8a93a6">Ты:</span> ' : '';
-
     var tm = c.lastTime ? fmtTime(c.lastTime) : "";
-
     h += '<div class="chat-item' + (c.id === openChatId ? " active" : "") + '" data-id="' + c.id + '">' +
       '<div class="chat-avatar">' + avatar + '</div>' +
-      '<div class="chat-info">' +
-        '<div class="chat-title">' + esc(title) + '</div>' +
-        '<div class="chat-last">' + prefix + esc(last) + '</div>' +
-      '</div>' +
+      '<div class="chat-info"><div class="chat-title">' + esc(title) + '</div><div class="chat-last">' + prefix + esc(last) + '</div></div>' +
       '<div class="chat-time">' + tm + '</div>' +
     '</div>';
   }
   box.innerHTML = h;
   var items = box.querySelectorAll(".chat-item");
   for (var j = 0; j < items.length; j++){
-    (function(el){
-      el.addEventListener("click", function(){
-        openChat(el.getAttribute("data-id"));
-      });
-    })(items[j]);
+    (function(el){ el.addEventListener("click", function(){ openChat(el.getAttribute("data-id")); }); })(items[j]);
   }
 }
+</script><script>
+function renderGlobalSearch(q){
+  var box = $("chatList");
+  if (!box) return;
+  box.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280;font-size:12px">🔍 Поиск...</div>';
+  var results = { users: [], chats: [] };
+  var pending = 2;
+  function done(){
+    pending--;
+    if (pending > 0) return;
+    var h = "";
+    if (results.chats.length){
+      h += '<div class="search-section">Каналы и группы</div>';
+      results.chats.forEach(function(c){
+        var av = c.type === "channel" ? "📢" : "👥";
+        var joined = false;
+        for (var i = 0; i < chats.length; i++) if (chats[i].id === c.chatId){ joined = true; break; }
+        h += '<div class="search-item" data-chatid="' + esc(c.chatId) + '" data-username="' + esc(c.username) + '">' +
+          '<div class="avatar">' + av + '</div>' +
+          '<div class="info"><div class="title">' + esc(c.title) + '</div><div class="sub">@' + esc(c.username) + ' · ' + (c.members || 0) + '</div></div>' +
+          (joined ? '<div class="joined">Уже в чате</div>' : '<div class="join">Войти</div>') +
+        '</div>';
+      });
+    }
+    if (results.users.length){
+      h += '<div class="search-section">Пользователи</div>';
+      results.users.forEach(function(u){
+        var av = u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nickname ? esc(u.nickname[0].toUpperCase()) : "?");
+        h += '<div class="search-item" data-uid="' + esc(u.uid) + '" data-username="' + esc(u.username) + '">' +
+          '<div class="avatar">' + av + '</div>' +
+          '<div class="info"><div class="title">' + esc(u.nickname || u.username) + '</div><div class="sub">@' + esc(u.username) + '</div></div>' +
+          '<div class="join">Написать</div>' +
+        '</div>';
+      });
+    }
+    if (!results.chats.length && !results.users.length){
+      h = '<div style="padding:40px 20px;text-align:center;color:#6b7280;font-size:13px">🔍 Ничего не найдено</div>';
+    }
+    box.innerHTML = h;
+    var chatItems = box.querySelectorAll("[data-chatid]");
+    for (var i = 0; i < chatItems.length; i++){
+      (function(el){ el.addEventListener("click", function(){ joinPublicChat(el.getAttribute("data-chatid")); }); })(chatItems[i]);
+    }
+    var userItems = box.querySelectorAll("[data-uid]");
+    for (var j = 0; j < userItems.length; j++){
+      (function(el){ el.addEventListener("click", function(){ openPrivateByUsername(el.getAttribute("data-username")); }); })(userItems[j]);
+    }
+  }
+  db.collection("public_chats").limit(50).get().then(function(snap){
+    snap.forEach(function(doc){
+      var d = doc.data(); d.chatId = d.chatId || doc.id;
+      if ((d.title || "").toLowerCase().indexOf(q) >= 0 || (d.username || "").toLowerCase().indexOf(q) >= 0){
+        results.chats.push(d);
+      }
+    });
+    done();
+  }).catch(function(){ done(); });
+  db.collection("users").limit(100).get().then(function(snap){
+    snap.forEach(function(doc){
+      var d = doc.data(); d.uid = d.uid || doc.id;
+      if (d.uid === me.uid) return;
+      if ((d.nickname || "").toLowerCase().indexOf(q) >= 0 || (d.username || "").toLowerCase().indexOf(q) >= 0){
+        results.users.push(d);
+      }
+    });
+    results.users = results.users.slice(0, 20);
+    done();
+  }).catch(function(){ done(); });
+}
 
+function joinPublicChat(chatId){
+  if (!chatId) return;
+  for (var i = 0; i < chats.length; i++) if (chats[i].id === chatId){ openChat(chatId); return; }
+  var chatRef = db.collection("chats").doc(chatId);
+  chatRef.get().then(function(doc){
+    if (!doc.exists) throw new Error("Чат не найден");
+    var d = doc.data();
+    var parts = d.participants || [];
+    if (parts.indexOf(me.uid) < 0){
+      parts.push(me.uid);
+      var titles = d.titles || {};
+      titles[me.uid] = profile.nickname || profile.username;
+      return chatRef.update({ participants: parts, titles: titles }).then(function(){ return chatId; });
+    }
+    return chatId;
+  }).then(function(id){
+    $("searchInput").value = ""; chatSearchQuery = "";
+    setTimeout(function(){ openChat(id); }, 300);
+  }).catch(function(e){ toast(e.message, "error"); });
+}
+</script><script>
+function openPrivateByUsername(uname){
+  if (!uname) return;
+  db.collection("usernames").doc(uname).get().then(function(doc){
+    if (!doc.exists) throw new Error("Пользователь не найден");
+    var otherUid = doc.data().uid;
+    if (otherUid === me.uid) throw new Error("Это ты сам");
+    return findOrCreatePrivate(otherUid);
+  }).then(function(id){
+    $("searchInput").value = ""; chatSearchQuery = "";
+    setTimeout(function(){ openChat(id); }, 300);
+  }).catch(function(e){ toast(e.message, "error"); });
+}
+
+function openPrivateByUid(otherUid){
+  if (!otherUid || otherUid === me.uid) return;
+  findOrCreatePrivate(otherUid).then(function(id){ if (id) openChat(id); })
+    .catch(function(e){ toast(e.message, "error"); });
+}
+
+function findOrCreatePrivate(otherUid){
+  return db.collection("chats").where("participants", "array-contains", me.uid).get()
+    .then(function(snap){
+      var existing = null;
+      snap.forEach(function(d){
+        var dd = d.data();
+        if (dd.type !== "private") return;
+        if ((dd.participants || []).length === 2 && (dd.participants || []).indexOf(otherUid) >= 0){
+          existing = d.id;
+        }
+      });
+      if (existing) return existing;
+      return db.collection("users").doc(otherUid).get().then(function(otherDoc){
+        var od = otherDoc.data() || {};
+        var now = firebase.firestore.FieldValue.serverTimestamp();
+        var t = {};
+        t[me.uid] = profile.nickname || profile.username;
+        t[otherUid] = od.nickname || od.username || "User";
+        return db.collection("chats").add({
+          type: "private", participants: [me.uid, otherUid], titles: t,
+          lastMessage: "", lastMessageType: "text", lastFrom: "",
+          lastTime: now, unread: {}, createdAt: now
+        }).then(function(ref){ return ref.id; });
+      });
+    });
+}
+
+var searchDebounce = null;
 on("searchInput", "input", function(){
-  chatSearchQuery = this.value;
-  renderChatList();
+  chatSearchQuery = this.value.trim();
+  clearTimeout(searchDebounce);
+  if (chatSearchQuery.length >= 2) searchDebounce = setTimeout(renderChatList, 300);
+  else renderChatList();
 });
 
-/* Открытие чата */
 function openChat(chatId){
   replyTo = null;
-
+  $("searchInput").value = ""; chatSearchQuery = "";
   if (msgUnsub){ msgUnsub(); msgUnsub = null; }
   if (typingUnsub){ typingUnsub(); typingUnsub = null; }
 
@@ -633,19 +985,17 @@ function openChat(chatId){
   var title = chat.title || "Чат";
   var sub = chat.type === "private" ? "личный чат" : chat.type === "group" ? "группа" : "канал";
   var avatar = chat.type === "channel" ? "📢" : chat.type === "group" ? "👥" : "💬";
-
   if (chat.type === "private"){
     var other = findOther(chat.participants, me.uid);
     title = (chat.titles && chat.titles[other]) || "Личный чат";
   }
-
   var canWrite = chat.type !== "channel" || (chat.admins || []).indexOf(me.uid) >= 0;
 
   $("main").innerHTML =
     '<div id="mainHeader">' +
       '<button id="backBtn">←</button>' +
-      '<div class="chat-avatar">' + avatar + '</div>' +
-      '<div style="flex:1;min-width:0">' +
+      '<div class="chat-avatar" id="mainHeaderAvatar">' + avatar + '</div>' +
+      '<div style="flex:1;min-width:0" id="mainHeaderInfo">' +
         '<h3>' + esc(title) + '</h3>' +
         '<div class="sub">' + esc(sub) + '</div>' +
       '</div>' +
@@ -663,207 +1013,243 @@ function openChat(chatId){
 
   on("backBtn", "click", function(){
     $("app").classList.remove("chatOpen");
-    openChatId = null;
-    openChatData = null;
+    openChatId = null; openChatData = null;
     if (msgUnsub){ msgUnsub(); msgUnsub = null; }
     if (typingUnsub){ typingUnsub(); typingUnsub = null; }
     renderChatList();
   });
 
+  var hA = $("mainHeaderAvatar"); var hI = $("mainHeaderInfo");
+  if (hA) hA.addEventListener("click", function(){ openChatProfile(openChatId); });
+  if (hI) hI.addEventListener("click", function(){ openChatProfile(openChatId); });
+
   if (canWrite){
     on("sendBtn", "click", sendText);
     on("fileBtn", "click", function(){ $("photoFile").click(); });
     on("photoFile", "change", sendPhoto);
-    on("msgInput", "keydown", function(e){
-      if (e.key === "Enter"){ e.preventDefault(); sendText(); }
-    });
+    on("msgInput", "keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); sendText(); } });
   }
 
-  // сброс unread
-  var upd = {};
-  upd["unread." + me.uid] = 0;
-  db.collection("chats").doc(chatId).update(upd).catch(function(e){ console.warn(e); });
+  var upd = {}; upd["unread." + me.uid] = 0;
+  db.collection("chats").doc(chatId).update(upd).catch(function(){});
 
   subscribeMessages(chatId);
 }
 
-/* Reply */
-var replyTo = null;
-
-function cancelReply(){
-  replyTo = null;
-}
+function cancelReply(){ replyTo = null; }
 </script><script>
 function subscribeMessages(chatId){
   var box = $("messages");
   if (!box) return;
   box.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:12px;padding:20px">Загрузка...</div>';
-
   msgUnsub = db.collection("chats").doc(chatId).collection("messages")
-    .orderBy("createdAt", "asc")
-    .limit(200)
+    .orderBy("createdAt", "asc").limit(200)
     .onSnapshot(function(snap){
-      var m = $("messages");
-      if (!m) return;
-
+      var m = $("messages"); if (!m) return;
       var msgs = [];
-      snap.forEach(function(doc){
-        var d = doc.data();
-        d._id = doc.id;
-        msgs.push(d);
-      });
-
+      snap.forEach(function(doc){ var d = doc.data(); d._id = doc.id; msgs.push(d); });
       if (msgs.length === 0){
-        m.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:13px;padding:40px 20px">💬 Здесь пока пусто<br><br>Напиши первое сообщение</div>';
+        m.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:13px;padding:40px 20px">💬 Здесь пока пусто</div>';
         return;
       }
-
       var wasBottom = m.scrollHeight - m.scrollTop - m.clientHeight < 150;
       m.innerHTML = "";
-
       for (var i = 0; i < msgs.length; i++){
         var d = msgs[i];
         var mine = d.from === me.uid;
-
         var div = document.createElement("div");
         div.className = "msg" + (mine ? " mine" : "");
-
         var senderHtml = mine ? "" : '<div class="sender">' + esc(d.nickname || "?") + '</div>';
         var textHtml = d.text ? '<div>' + esc(d.text).split("\n").join("<br>") + '</div>' : '';
         var photoHtml = d.photoUrl ? '<img src="' + esc(d.photoUrl) + '" loading="lazy">' : '';
         var timeHtml = '<div class="time">' + fmtTime(d.createdAt) + '</div>';
-
         div.innerHTML = senderHtml + textHtml + photoHtml + timeHtml;
         m.appendChild(div);
-
-        // пометить прочитанным
         if (!mine && d.read !== true && !markedRead[d._id]){
           markedRead[d._id] = true;
-          doc.ref.update({ read: true }).catch(function(){});
+          var docRef = snap.docs[i] && snap.docs[i].ref;
+          if (docRef) docRef.update({ read: true }).catch(function(){});
         }
       }
-
       if (wasBottom || msgs.length <= 1) m.scrollTop = m.scrollHeight;
-
-      // звук для нового сообщения
-      var lastMsg = msgs[msgs.length - 1];
-      if (lastMsg && lastMsg.from !== me.uid && msgs.length > 1){
-        // beep только если это действительно новое
-      }
     }, function(err){
       var m = $("messages");
       if (m) m.innerHTML = '<div style="color:#f87171;font-size:12px;padding:20px">Ошибка: ' + esc(err.message) + '</div>';
     });
 }
 
-/* Отправка текста */
 function sendText(){
-  var inp = $("msgInput");
-  var text = inp.value.trim();
+  var inp = $("msgInput"); var text = inp.value.trim();
   if (!text || !openChatId) return;
   inp.value = "";
-
   var chatRef = db.collection("chats").doc(openChatId);
   var msgRef = chatRef.collection("messages").doc();
   var now = firebase.firestore.FieldValue.serverTimestamp();
-
   var data = {
-    from: me.uid,
-    nickname: profile.nickname || profile.username,
-    avatar: profile.avatar || "",
-    text: text,
-    photoUrl: "",
-    read: false,
-    createdAt: now
+    from: me.uid, nickname: profile.nickname || profile.username,
+    avatar: profile.avatar || "", text: text, photoUrl: "",
+    read: false, createdAt: now
   };
-
   var parts = [];
-  for (var ci = 0; ci < chats.length; ci++){
-    if (chats[ci].id === openChatId){ parts = chats[ci].participants || []; break; }
-  }
-
+  for (var ci = 0; ci < chats.length; ci++) if (chats[ci].id === openChatId){ parts = chats[ci].participants || []; break; }
   var inc = firebase.firestore.FieldValue.increment(1);
-  var upd = {
-    lastMessage: text.slice(0, 40),
-    lastMessageType: "text",
-    lastFrom: me.uid,
-    lastTime: now
-  };
-  for (var i = 0; i < parts.length; i++){
-    if (parts[i] !== me.uid){
-      upd["unread." + parts[i]] = inc;
-    }
-  }
-
-  msgRef.set(data).then(function(){
-    return chatRef.update(upd);
-  }).catch(function(e){
-    inp.value = text;
-    toast("Ошибка: " + e.message, "error");
-  });
+  var upd = { lastMessage: text.slice(0, 40), lastMessageType: "text", lastFrom: me.uid, lastTime: now };
+  for (var i = 0; i < parts.length; i++) if (parts[i] !== me.uid) upd["unread." + parts[i]] = inc;
+  msgRef.set(data).then(function(){ return chatRef.update(upd); })
+    .catch(function(e){ inp.value = text; toast("Ошибка: " + e.message, "error"); });
 }
 
-/* Отправка фото */
 function sendPhoto(ev){
-  var file = ev.target.files[0];
-  ev.target.value = "";
+  var file = ev.target.files[0]; ev.target.value = "";
   if (!file || !openChatId) return;
   if (file.size > 32 * 1024 * 1024){ toast("Фото больше 32 МБ", "error"); return; }
-
   toast("📤 Загрузка...");
   compressImage(file, 1600, 0.85, function(b64){
     uploadImgBB(b64).then(function(url){
       var chatRef = db.collection("chats").doc(openChatId);
       var msgRef = chatRef.collection("messages").doc();
       var now = firebase.firestore.FieldValue.serverTimestamp();
-
       var data = {
-        from: me.uid,
-        nickname: profile.nickname || profile.username,
-        avatar: profile.avatar || "",
-        text: "",
-        photoUrl: url,
-        read: false,
-        createdAt: now
+        from: me.uid, nickname: profile.nickname || profile.username,
+        avatar: profile.avatar || "", text: "", photoUrl: url,
+        read: false, createdAt: now
       };
-
       var parts = [];
-      for (var ci = 0; ci < chats.length; ci++){
-        if (chats[ci].id === openChatId){ parts = chats[ci].participants || []; break; }
-      }
-
+      for (var ci = 0; ci < chats.length; ci++) if (chats[ci].id === openChatId){ parts = chats[ci].participants || []; break; }
       var inc = firebase.firestore.FieldValue.increment(1);
-      var upd = {
-        lastMessage: "📷 Фото",
-        lastMessageType: "photo",
-        lastFrom: me.uid,
-        lastTime: now
-      };
-      for (var i = 0; i < parts.length; i++){
-        if (parts[i] !== me.uid){
-          upd["unread." + parts[i]] = inc;
-        }
-      }
-
-      return msgRef.set(data).then(function(){
-        return chatRef.update(upd);
-      });
-    }).then(function(){
-      toast("✅ Отправлено");
-    }).catch(function(e){
-      toast("❌ " + e.message, "error");
-    });
+      var upd = { lastMessage: "📷 Фото", lastMessageType: "photo", lastFrom: me.uid, lastTime: now };
+      for (var i = 0; i < parts.length; i++) if (parts[i] !== me.uid) upd["unread." + parts[i]] = inc;
+      return msgRef.set(data).then(function(){ return chatRef.update(upd); });
+    }).then(function(){ toast("✅ Отправлено", "success"); })
+      .catch(function(e){ toast("❌ " + e.message, "error"); });
   });
 }
+
+function openChatProfile(chatId){
+  if (!chatId) return;
+  var modal = $("chatProfileModal");
+  var body = $("chatProfileBody");
+  if (!modal || !body) return;
+  body.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280">Загрузка...</div>';
+  modal.classList.add("show");
+  db.collection("chats").doc(chatId).get().then(function(doc){
+    if (!doc.exists) throw new Error("Чат не найден");
+    var chat = doc.data();
+    var participants = chat.participants || [];
+    var admins = chat.admins || [];
+    var isChannel = chat.type === "channel";
+    var isGroup = chat.type === "group";
+    var isPrivate = chat.type === "private";
+    var avatarHtml = isChannel ? "📢" : isGroup ? "👥" : "💬";
+    var title = chat.title || "";
+    if (isPrivate){
+      var other = findOther(participants, me.uid);
+      var t = chat.titles || {};
+      title = t[other] || "Личный чат";
+    }
+    var typeLabel = isChannel ? "📢 Канал" : isGroup ? "👥 Группа" : "💬 Личный чат";
+    if (chat.public && chat.username) typeLabel += " · Публичный";
+    var h = '<div class="chat-profile-avatar">' + avatarHtml + '</div>';
+    h += '<div class="chat-profile-title">' + esc(title) + '</div>';
+    if (chat.username) h += '<div class="chat-profile-username">@' + esc(chat.username) + '</div>';
+    h += '<div class="chat-profile-type">' + typeLabel + '</div>';
+    h += '<div class="chat-profile-stats">';
+    h += '<div><div class="num">' + participants.length + '</div><div class="lbl">Участников</div></div>';
+    h += '<div><div class="num">' + admins.length + '</div><div class="lbl">Админов</div></div>';
+    h += '</div>';
+    h += '<div class="chat-members-title">Участники</div>';
+    h += '<div id="chatMembersList"><div style="text-align:center;color:#6b7280;font-size:12px;padding:10px">Загрузка...</div></div>';
+    if (isPrivate){
+      var oth = findOther(participants, me.uid);
+      h += '<button id="writeToUserBtn" class="btn-primary wide" data-uid="' + esc(oth) + '">💬 Написать</button>';
+      if (isOwner() && oth && oth !== me.uid){
+        h += '<button id="giftSendBtn" data-uid="' + esc(oth) + '">🎁 Подарить подарок</button>';
+        h += '<button id="fireGrantBtnChat" data-uid="' + esc(oth) + '">🔥 Выдать огоньки</button>';
+      }
+    }
+    body.innerHTML = h;
+    loadChatMembers(participants, admins);
+    var wBtn = $("writeToUserBtn");
+    if (wBtn) wBtn.addEventListener("click", function(){
+      var uid = wBtn.getAttribute("data-uid"); modal.classList.remove("show");
+      if (uid && uid !== me.uid) openPrivateByUid(uid);
+    });
+    var gBtn = $("giftSendBtn");
+    if (gBtn) gBtn.addEventListener("click", function(){
+      var uid = gBtn.getAttribute("data-uid");
+      db.collection("users").doc(uid).get().then(function(d){
+        if (d.exists){ var u = d.data(); modal.classList.remove("show");
+          setTimeout(function(){ showGiftSend(uid, u.nickname || u.username || "User"); }, 200); }
+      });
+    });
+    var fBC = $("fireGrantBtnChat");
+    if (fBC) fBC.addEventListener("click", function(){
+      var uid = fBC.getAttribute("data-uid");
+      db.collection("users").doc(uid).get().then(function(d){
+        if (d.exists){ var u = d.data(); modal.classList.remove("show");
+          setTimeout(function(){ openFireGrantModal(uid, u.nickname || u.username || "User", u.fire || 0); }, 200); }
+      });
+    });
+  }).catch(function(e){
+    body.innerHTML = '<div style="text-align:center;color:#f87171;padding:20px">Ошибка: ' + esc(e.message) + '</div>';
+  });
+}
+
+function loadChatMembers(uids, admins){
+  var list = $("chatMembersList");
+  if (!list || !uids.length){ if (list) list.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:12px;padding:10px">Нет участников</div>'; return; }
+  var promises = [];
+  for (var i = 0; i < uids.length; i++){
+    (function(uid){
+      promises.push(db.collection("users").doc(uid).get().then(function(d){
+        if (!d.exists) return null;
+        var u = d.data(); u.uid = uid; return u;
+      }).catch(function(){ return null; }));
+    })(uids[i]);
+  }
+  Promise.all(promises).then(function(users){
+    var valid = users.filter(function(u){ return u !== null; });
+    valid.sort(function(a, b){
+      var aA = admins.indexOf(a.uid) >= 0 ? 0 : 1;
+      var bA = admins.indexOf(b.uid) >= 0 ? 0 : 1;
+      if (aA !== bA) return aA - bA;
+      if (a.online !== b.online) return a.online ? -1 : 1;
+      return (a.nickname || "").localeCompare(b.nickname || "");
+    });
+    var h = "";
+    for (var i = 0; i < valid.length; i++){
+      var u = valid[i];
+      var isAdmin = admins.indexOf(u.uid) >= 0;
+      var isMe = u.uid === me.uid;
+      var av = u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nickname ? esc(u.nickname[0].toUpperCase()) : "?");
+      var onlineDot = u.online ? '<div class="online-dot"></div>' : "";
+      h += '<div class="chat-member" data-uid="' + esc(u.uid) + '">' +
+        '<div class="avatar">' + av + onlineDot + '</div>' +
+        '<div class="info"><div class="name">' + esc(u.nickname || "—") + (isAdmin ? ' <span class="crown">👑</span>' : '') + (isMe ? ' <span style="color:#8a93a6;font-size:11px">(ты)</span>' : '') + '</div><div class="uname">@' + esc(u.username || "—") + '</div></div>' +
+      '</div>';
+    }
+    list.innerHTML = h;
+    var items = list.querySelectorAll(".chat-member");
+    for (var j = 0; j < items.length; j++){
+      (function(el){
+        el.addEventListener("click", function(){
+          var uid = el.getAttribute("data-uid");
+          if (uid === me.uid){ $("chatProfileModal").classList.remove("show"); $("btnProfile").click(); return; }
+          $("chatProfileModal").classList.remove("show");
+          openPrivateByUid(uid);
+        });
+      })(items[j]);
+    }
+  });
+}
+
+on("closeChatProfile", "click", function(){ $("chatProfileModal").classList.remove("show"); });
 </script><script>
-/* Новый чат */
 on("btnNew", "click", function(){
   $("newChatModal").classList.add("show");
   $("privateUsername").value = "";
-  $("groupTitle").value = "";
-  $("groupUsers").value = "";
-  $("channelTitle").value = "";
-  $("channelUsers").value = "";
+  $("groupTitle").value = ""; $("groupUsers").value = ""; $("groupUsername").value = ""; $("groupPublic").checked = false;
+  $("channelTitle").value = ""; $("channelUsers").value = ""; $("channelUsername").value = ""; $("channelPublic").checked = false;
 });
 on("closeNewChat", "click", function(){ $("newChatModal").classList.remove("show"); });
 
@@ -881,89 +1267,44 @@ for (var i = 0; i < tabBtns.length; i++){
   })(tabBtns[i]);
 }
 
-/* Личный чат */
 on("createPrivate", "click", function(){
   var uname = $("privateUsername").value.trim().toLowerCase().replace(/^@/, "");
   if (!validUsername(uname)){ toast("Некорректный @username", "error"); return; }
-
   db.collection("usernames").doc(uname).get().then(function(doc){
     if (!doc.exists) throw new Error("Пользователь не найден");
     var otherUid = doc.data().uid;
     if (otherUid === me.uid) throw new Error("Это ты сам");
-
-    return db.collection("chats")
-      .where("participants", "array-contains", me.uid)
-      .get()
-      .then(function(snap){
-        var existing = null;
-        snap.forEach(function(d){
-          var dd = d.data();
-          if (dd.type !== "private") return;
-          if ((dd.participants || []).length === 2 && (dd.participants || []).indexOf(otherUid) >= 0){
-            existing = d.id;
-          }
-        });
-        if (existing){
-          $("newChatModal").classList.remove("show");
-          openChat(existing);
-          throw new Error("done");
-        }
-        return db.collection("users").doc(otherUid).get().then(function(otherDoc){
-          var od = otherDoc.data() || {};
-          var now = firebase.firestore.FieldValue.serverTimestamp();
-          var t = {};
-          t[me.uid] = profile.nickname || profile.username;
-          t[otherUid] = od.nickname || od.username || "User";
-          return db.collection("chats").add({
-            type: "private",
-            participants: [me.uid, otherUid],
-            titles: t,
-            lastMessage: "",
-            lastMessageType: "text",
-            lastFrom: "",
-            lastTime: now,
-            unread: {},
-            createdAt: now
-          });
-        });
-      });
-  }).then(function(ref){
-    if (ref && ref.id){
-      $("newChatModal").classList.remove("show");
-      $("privateUsername").value = "";
-      openChat(ref.id);
-    }
-  }).catch(function(e){
-    if (e.message === "done") return;
-    toast(e.message, "error");
-  });
+    return findOrCreatePrivate(otherUid);
+  }).then(function(id){
+    $("newChatModal").classList.remove("show"); $("privateUsername").value = "";
+    if (id) openChat(id);
+  }).catch(function(e){ toast(e.message, "error"); });
 });
 
-/* Группа */
 on("createGroup", "click", function(){
   var title = $("groupTitle").value.trim();
   var usersStr = $("groupUsers").value.trim();
+  var uname = $("groupUsername").value.trim().toLowerCase().replace(/^@/, "");
+  var isPub = $("groupPublic").checked;
   if (!title){ toast("Введи название", "error"); return; }
-  createMultiChat("group", title, usersStr);
+  if (isPub && !uname){ toast("Введи публичный @username", "error"); return; }
+  createMultiChat("group", title, usersStr, uname, isPub);
 });
 
-/* Канал */
 on("createChannel", "click", function(){
   var title = $("channelTitle").value.trim();
   var usersStr = $("channelUsers").value.trim();
+  var uname = $("channelUsername").value.trim().toLowerCase().replace(/^@/, "");
+  var isPub = $("channelPublic").checked;
   if (!title){ toast("Введи название", "error"); return; }
-  createMultiChat("channel", title, usersStr);
+  if (isPub && !uname){ toast("Введи публичный @username", "error"); return; }
+  createMultiChat("channel", title, usersStr, uname, isPub);
 });
 
-function createMultiChat(type, title, usersStr){
-  var names = usersStr.split(",").map(function(s){
-    return s.trim().toLowerCase().replace(/^@/, "");
-  }).filter(function(s){ return s.length > 0; });
-
+function createMultiChat(type, title, usersStr, pubUsername, isPublic){
+  var names = usersStr.split(",").map(function(s){ return s.trim().toLowerCase().replace(/^@/, ""); }).filter(function(s){ return s.length > 0; });
   var uids = [me.uid];
-  var titles = {};
-  titles[me.uid] = profile.nickname || profile.username;
-
+  var titles = {}; titles[me.uid] = profile.nickname || profile.username;
   var chain = Promise.resolve();
   names.forEach(function(un){
     chain = chain.then(function(){
@@ -980,31 +1321,37 @@ function createMultiChat(type, title, usersStr){
       });
     });
   });
-
+  if (isPublic && pubUsername){
+    if (!validUsername(pubUsername)){ toast("Публичный @username: 3-20 символов", "error"); return; }
+    chain = chain.then(function(){
+      return db.collection("public_chats").doc(pubUsername).get().then(function(doc){
+        if (doc.exists) throw new Error("@" + pubUsername + " уже занят");
+      });
+    });
+  }
   chain.then(function(){
     var now = firebase.firestore.FieldValue.serverTimestamp();
-    return db.collection("chats").add({
-      type: type,
-      title: title,
-      participants: uids,
-      admins: [me.uid],
-      titles: titles,
-      lastMessage: "",
-      lastMessageType: "text",
-      lastFrom: "",
-      lastTime: now,
-      unread: {},
-      createdAt: now
-    });
+    var data = {
+      type: type, title: title, participants: uids, admins: [me.uid],
+      titles: titles, lastMessage: "", lastMessageType: "text", lastFrom: "",
+      lastTime: now, unread: {}, createdAt: now
+    };
+    if (isPublic && pubUsername){ data.username = pubUsername; data.public = true; }
+    return db.collection("chats").add(data);
+  }).then(function(ref){
+    if (isPublic && pubUsername){
+      return db.collection("public_chats").doc(pubUsername).set({
+        chatId: ref.id, title: title, username: pubUsername, type: type,
+        members: uids.length, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){ return ref; });
+    }
+    return ref;
   }).then(function(ref){
     $("newChatModal").classList.remove("show");
-    $("groupTitle").value = ""; $("groupUsers").value = "";
-    $("channelTitle").value = ""; $("channelUsers").value = "";
     openChat(ref.id);
   }).catch(function(e){ toast(e.message, "error"); });
 }
 
-/* Профиль */
 on("btnProfile", "click", function(){
   pendingAvatar2 = null;
   if (profile.avatar) $("avatarPreview2").innerHTML = '<img src="' + profile.avatar + '">';
@@ -1012,6 +1359,11 @@ on("btnProfile", "click", function(){
   $("profNick").value = profile.nickname || "";
   $("profUsername").value = profile.username || "";
   $("profileModal").classList.add("show");
+  loadMyFire();
+  loadUserGifts(me.uid, $("myGiftsContainer"));
+  loadSentGifts();
+  if ($("fireGrantSection")) $("fireGrantSection").classList.toggle("hidden", !isOwner());
+  if ($("giftSelfBtn")) $("giftSelfBtn").classList.toggle("hidden", !isOwner());
 });
 on("closeProfile", "click", function(){ $("profileModal").classList.remove("show"); });
 
@@ -1020,7 +1372,6 @@ on("saveProfile", "click", function(){
   var uname = $("profUsername").value.trim().toLowerCase().replace(/^@/, "");
   if (!nick){ toast("Введи имя", "error"); return; }
   if (!validUsername(uname)){ toast("@username: 3-20 символов a-z 0-9 _", "error"); return; }
-
   var oldUname = profile.username;
   var doSave = function(avatarUrl){
     var chain = Promise.resolve();
@@ -1028,57 +1379,635 @@ on("saveProfile", "click", function(){
       chain = chain
         .then(function(){
           return db.collection("usernames").doc(uname).get().then(function(doc){
-            if (doc.exists && doc.data().uid !== me.uid){
-              throw new Error("@" + uname + " уже занят");
-            }
+            if (doc.exists && doc.data().uid !== me.uid) throw new Error("@" + uname + " уже занят");
           });
         })
         .then(function(){
           return db.collection("usernames").doc(uname).set({
-            uid: me.uid,
-            username: uname,
+            uid: me.uid, username: uname,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         })
-        .then(function(){
-          return db.collection("usernames").doc(oldUname).delete();
-        });
+        .then(function(){ return db.collection("usernames").doc(oldUname).delete(); });
     }
     chain = chain.then(function(){
       var upd = { nickname: nick, username: uname };
       if (avatarUrl !== null) upd.avatar = avatarUrl;
       return db.collection("users").doc(me.uid).update(upd);
     }).then(function(){
-      profile.nickname = nick;
-      profile.username = uname;
+      profile.nickname = nick; profile.username = uname;
       if (avatarUrl !== null) profile.avatar = avatarUrl;
       renderMe();
       $("profileModal").classList.remove("show");
-      toast("✅ Сохранено");
+      toast("✅ Сохранено", "success");
     }).catch(function(e){ toast("❌ " + e.message, "error"); });
   };
-
   if (pendingAvatar2){
     toast("📤 Загрузка фото...");
-    uploadImgBB(pendingAvatar2).then(function(url){ doSave(url); })
-      .catch(function(e){ toast("❌ " + e.message, "error"); });
-  } else {
-    doSave(null);
-  }
+    uploadImgBB(pendingAvatar2).then(function(url){ doSave(url); }).catch(function(e){ toast("❌ " + e.message, "error"); });
+  } else doSave(null);
 });
 
 on("logoutBtn", "click", function(){
   if (!me) return;
   db.collection("users").doc(me.uid).update({ online: false }).catch(function(){});
-  if (chatsUnsub) chatsUnsub();
-  if (msgUnsub) msgUnsub();
-  if (typingUnsub) typingUnsub();
+  if (chatsUnsub) chatsUnsub(); if (msgUnsub) msgUnsub(); if (typingUnsub) typingUnsub();
+  if (incomingGiftsUnsub) incomingGiftsUnsub();
   auth.signOut();
 });
+</script><script>
+function openFireGrantModal(uid, name, currentFire){
+  if (!isOwner()){ toast("Только владелец может выдавать", "error"); return; }
+  $("fireGrantTargetName").textContent = name;
+  $("fireGrantCurrent").textContent = currentFire;
+  $("fireGrantAmount2").value = 100;
+  $("fireGrantModal").setAttribute("data-target", uid);
+  $("fireGrantModal").classList.add("show");
+}
 
-/* Старт */
+function grantFire(targetUid, amount){
+  if (fireGranting) return;
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  amount = parseInt(amount) || 0;
+  if (amount < 1){ toast("Введи число > 0", "error"); return; }
+  fireGranting = true;
+  db.collection("users").doc(targetUid).update({
+    fire: firebase.firestore.FieldValue.increment(amount)
+  }).then(function(){
+    fireGranting = false;
+    toast("🔥 Выдано +" + amount, "success");
+    if (targetUid === me.uid) loadMyFire();
+    $("fireGrantModal").classList.remove("show");
+    $("profileModal").classList.remove("show");
+  }).catch(function(e){ fireGranting = false; toast("Ошибка: " + e.message, "error"); });
+}
+
+on("fireGrantBtn", "click", function(){ grantFire(me.uid, $("fireGrantAmount").value); });
+on("fireGrantConfirm", "click", function(){
+  var uid = $("fireGrantModal").getAttribute("data-target");
+  if (!uid){ toast("Нет получателя", "error"); return; }
+  grantFire(uid, $("fireGrantAmount2").value);
+});
+on("fireGrantCancel", "click", function(){
+  $("fireGrantModal").classList.remove("show");
+  $("fireGrantAmount2").value = 100;
+  $("fireGrantModal").removeAttribute("data-target");
+});
+
+var qBtns = document.querySelectorAll("#fireGrantSection .fire-quick button");
+for (var i = 0; i < qBtns.length; i++){
+  (function(b){ b.addEventListener("click", function(){ $("fireGrantAmount").value = b.getAttribute("data-amt"); }); })(qBtns[i]);
+}
+var qBtns2 = document.querySelectorAll("#fireGrantModal .fire-quick button");
+for (var j = 0; j < qBtns2.length; j++){
+  (function(b){
+    b.addEventListener("click", function(){
+      var cur = parseInt($("fireGrantAmount2").value) || 0;
+      $("fireGrantAmount2").value = cur + (parseInt(b.getAttribute("data-amt")) || 0);
+    });
+  })(qBtns2[j]);
+}
+</script><script>
+var PRESET_GIFTS = [
+  { id: "bear", name: "Мишка", icon: "🧸", rarity: "common", price: 10 },
+  { id: "heart", name: "Сердце", icon: "❤️", rarity: "common", price: 15 },
+  { id: "star", name: "Звезда", icon: "⭐", rarity: "rare", price: 50 },
+  { id: "cake", name: "Торт", icon: "🎂", rarity: "rare", price: 75 },
+  { id: "rocket", name: "Ракета", icon: "🚀", rarity: "epic", price: 200 },
+  { id: "crown", name: "Корона", icon: "👑", rarity: "epic", price: 500 },
+  { id: "diamond", name: "Алмаз", icon: "💎", rarity: "legendary", price: 1000 },
+  { id: "trophy", name: "Кубок", icon: "🏆", rarity: "legendary", price: 2500 }
+];
+
+function showGiftSend(targetUid, targetName){
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  $("giftTargetName").textContent = targetName || "—";
+  $("giftSendModal").classList.add("show");
+  $("giftSendModal").setAttribute("data-target", targetUid);
+  pendingGiftImage = null;
+  $("giftPreview").innerHTML = "🎁";
+  loadGiftTemplates();
+  updateGiftCooldown();
+  var list = $("giftList");
+  var h = "";
+  for (var i = 0; i < PRESET_GIFTS.length; i++){
+    var g = PRESET_GIFTS[i];
+    h += '<div class="gift-card ' + g.rarity + '" data-gift="' + g.id + '">' +
+      '<div class="gift-rarity ' + g.rarity + '">' + g.rarity.slice(0, 3) + '</div>' +
+      '<div class="gift-icon">' + g.icon + '</div>' +
+      '<div class="gift-name">' + esc(g.name) + '</div>' +
+      '<div class="gift-price">🔥 ' + g.price + '</div>' +
+    '</div>';
+  }
+  list.innerHTML = h;
+  var cards = list.querySelectorAll(".gift-card");
+  for (var j = 0; j < cards.length; j++){
+    (function(c){
+      c.addEventListener("click", function(){
+        var id = c.getAttribute("data-gift");
+        for (var k = 0; k < PRESET_GIFTS.length; k++){
+          if (PRESET_GIFTS[k].id === id){
+            var g = PRESET_GIFTS[k];
+            $("giftCustomName").value = g.name;
+            $("giftCustomIcon").value = g.icon;
+            $("giftCustomRarity").value = g.rarity;
+            $("giftCustomPrice").value = g.price;
+            pendingGiftImage = null;
+            $("giftPreview").innerHTML = g.icon;
+            break;
+          }
+        }
+      });
+    })(cards[j]);
+  }
+}
+
+function sendGift(){
+  if (giftSending) return;
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  var left = GIFT_COOLDOWN_MS - (Date.now() - lastGiftTime);
+  if (left > 0){ toast("⏱ Подожди " + Math.ceil(left/1000) + " сек", "error"); return; }
+  var targetUid = $("giftSendModal").getAttribute("data-target");
+  if (!targetUid){ toast("Нет получателя", "error"); return; }
+  var name = $("giftCustomName").value.trim();
+  var icon = $("giftCustomIcon").value.trim() || "🎁";
+  var rarity = $("giftCustomRarity").value;
+  var price = parseInt($("giftCustomPrice").value) || 0;
+  if (!name){ toast("Введи название", "error"); return; }
+  if (price < 1){ toast("Стоимость от 1 🔥", "error"); return; }
+  giftSending = true;
+  db.collection("users").doc(me.uid).get().then(function(myDoc){
+    if (!myDoc.exists) throw new Error("Профиль не найден");
+    var myFire = myDoc.data().fire || 0;
+    if (myFire < price) throw new Error("Недостаточно 🔥: у тебя " + myFire + ", нужно " + price);
+    var upload = pendingGiftImage ? uploadImgBB(pendingGiftImage) : Promise.resolve(null);
+    return upload.then(function(imageUrl){
+      var gift = {
+        name: name, icon: icon, image: imageUrl || "",
+        rarity: rarity, price: price,
+        from: me.uid, fromEmail: me.email || "",
+        fromNickname: profile.nickname || profile.username,
+        to: targetUid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      return db.collection("users").doc(targetUid).collection("gifts").add(gift)
+        .then(function(ref){
+          return db.collection("users").doc(me.uid).collection("sentGifts").add(gift).then(function(){ return ref; });
+        })
+        .then(function(){
+          return db.collection("users").doc(me.uid).update({
+            fire: firebase.firestore.FieldValue.increment(-price)
+          });
+        });
+    });
+  }).then(function(){
+    giftSending = false;
+    lastGiftTime = Date.now();
+    updateGiftCooldown();
+    toast("🎁 Подарок отправлен · -" + price + " 🔥", "success");
+    loadMyFire();
+    $("giftSendModal").classList.remove("show");
+    $("giftCustomName").value = ""; $("giftCustomIcon").value = "";
+    $("giftCustomRarity").value = "common"; $("giftCustomPrice").value = "100";
+    pendingGiftImage = null; $("giftPreview").innerHTML = "🎁";
+  }).catch(function(e){ giftSending = false; toast("❌ " + e.message, "error"); });
+}
+
+function loadUserGifts(uid, container){
+  if (!container) return;
+  container.innerHTML = '<div style="color:#6b7280;font-size:12px;padding:10px;text-align:center">Загрузка...</div>';
+  db.collection("users").doc(uid).collection("gifts").orderBy("createdAt", "desc").limit(50).get()
+    .then(function(snap){
+      if (snap.empty){
+        container.innerHTML = '<div style="color:#6b7280;font-size:12px;padding:10px;text-align:center;font-style:italic">Подарков нет</div>';
+        return;
+      }
+      var h = '<div class="gifts-grid">';
+      snap.forEach(function(doc){
+        var g = doc.data();
+        var iconHtml = g.image ? '<img src="' + esc(g.image) + '" style="max-width:44px;max-height:44px;border-radius:8px">' : esc(g.icon || "🎁");
+        h += '<div class="gift-card ' + (g.rarity||"common") + '" data-giftid="' + doc.id + '">' +
+          '<div class="gift-rarity ' + (g.rarity||"common") + '">' + (g.rarity||"common").slice(0,3) + '</div>' +
+          '<div class="gift-icon">' + iconHtml + '</div>' +
+          '<div class="gift-name">' + esc(g.name) + '</div>' +
+          '<div class="gift-price">🔥 ' + (g.price || 0) + '</div>' +
+        '</div>';
+      });
+      h += '</div>';
+      container.innerHTML = h;
+      var cards = container.querySelectorAll(".gift-card");
+      for (var i = 0; i < cards.length; i++){
+        (function(c){
+          c.addEventListener("click", function(){
+            var id = c.getAttribute("data-giftid");
+            db.collection("users").doc(uid).collection("gifts").doc(id).get().then(function(d){
+              if (d.exists) showGiftView(d.data());
+            });
+          });
+        })(cards[i]);
+      }
+    })
+    .catch(function(e){ container.innerHTML = '<div style="color:#f87171;font-size:12px;padding:10px">Ошибка: ' + esc(e.message) + '</div>'; });
+}
+
+function loadSentGifts(){
+  if (!me || !isOwner()) return;
+  var section = $("sentGiftsSection");
+  var container = $("sentGiftsContainer");
+  if (!section || !container) return;
+  section.classList.remove("hidden");
+  container.innerHTML = '<div style="color:#6b7280;font-size:12px;padding:10px;text-align:center">Загрузка...</div>';
+  db.collection("users").doc(me.uid).collection("sentGifts").orderBy("createdAt", "desc").limit(50).get()
+    .then(function(snap){
+      if (snap.empty){ container.innerHTML = '<div style="color:#6b7280;font-size:12px;padding:10px;text-align:center;font-style:italic">Ничего не отправлено</div>'; return; }
+      var h = '<div class="gifts-grid">';
+      snap.forEach(function(doc){
+        var g = doc.data();
+        var iconHtml = g.image ? '<img src="' + esc(g.image) + '" style="max-width:44px;max-height:44px;border-radius:8px">' : esc(g.icon || "🎁");
+        h += '<div class="gift-card ' + (g.rarity||"common") + '">' +
+          '<div class="gift-rarity ' + (g.rarity||"common") + '">' + (g.rarity||"common").slice(0,3) + '</div>' +
+          '<div class="gift-icon">' + iconHtml + '</div>' +
+          '<div class="gift-name">' + esc(g.name) + '</div>' +
+          '<div class="gift-price">🔥 ' + (g.price || 0) + '</div>' +
+        '</div>';
+      });
+      h += '</div>';
+      container.innerHTML = h;
+    })
+    .catch(function(e){ container.innerHTML = '<div style="color:#f87171;font-size:12px;padding:10px">Ошибка: ' + esc(e.message) + '</div>'; });
+}
+
+function showGiftView(g){
+  var rarityColors = { common:"#6b7280", rare:"#3b82f6", epic:"#a855f7", legendary:"#f59e0b" };
+  var rarityNames = { common:"Обычный", rare:"Редкий", epic:"Эпический", legendary:"Легендарный" };
+  var color = rarityColors[g.rarity] || "#6b7280";
+  var iconHtml = g.image ? '<img src="' + esc(g.image) + '" style="max-width:120px;max-height:120px;border-radius:14px">' : '<div style="font-size:80px;line-height:1">' + esc(g.icon || "🎁") + '</div>';
+  $("giftViewBody").innerHTML =
+    '<div style="text-align:center;padding:10px">' +
+      '<div style="margin-bottom:12px">' + iconHtml + '</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-bottom:6px">' + esc(g.name) + '</div>' +
+      '<div style="font-size:12px;font-weight:700;color:' + color + ';text-transform:uppercase;margin-bottom:14px">' + (rarityNames[g.rarity] || "Обычный") + '</div>' +
+      '<div style="background:#0a0c10;border:1px solid #2a303c;border-radius:12px;padding:14px;margin-bottom:12px">' +
+        '<div style="font-size:24px;color:#fbbf24;font-weight:800">🔥 ' + (g.price || 0) + '</div>' +
+        '<div style="font-size:11px;color:#8a93a6">Стоимость</div>' +
+      '</div>' +
+      '<div style="font-size:12px;color:#8a93a6">От: <b style="color:#00d2ff">' + esc(g.fromNickname || "—") + '</b></div>' +
+      (g.createdAt ? '<div style="font-size:11px;color:#6b7280;margin-top:6px">' + fmtTime(g.createdAt) + '</div>' : '') +
+    '</div>';
+  $("giftViewModal").classList.add("show");
+}
+
+function showConfetti(){
+  var canvas = $("confettiCanvas"); if (!canvas) return;
+  canvas.classList.add("show");
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  var ctx = canvas.getContext("2d");
+  var particles = [];
+  var colors = ["#f59e0b","#ef4444","#a855f7","#ec4899","#3b82f6","#4ade80","#fbbf24"];
+  for (var i = 0; i < 120; i++){
+    particles.push({
+      x: Math.random() * canvas.width, y: -20 - Math.random() * 100,
+      vx: (Math.random() - 0.5) * 4, vy: 2 + Math.random() * 4,
+      size: 6 + Math.random() * 8,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.2,
+      shape: Math.random() > 0.5 ? "rect" : "circle"
+    });
+  }
+  var frames = 0;
+  function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++){
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.rotation += p.rotSpeed;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation); ctx.fillStyle = p.color;
+      if (p.shape === "rect") ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.5);
+      else { ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    }
+    frames++;
+    if (frames < 180) requestAnimationFrame(draw);
+    else { canvas.classList.remove("show"); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  }
+  draw();
+}
+
+function showGiftNotification(icon, title, sub){
+  $("giftNotifIcon").textContent = icon || "🎁";
+  $("giftNotifTitle").textContent = title || "Подарок!";
+  $("giftNotifSub").textContent = sub || "";
+  var n = $("giftNotification");
+  n.classList.add("show");
+  setTimeout(function(){ n.classList.remove("show"); }, 3500);
+}
+
+function celebrateGift(gift){
+  playGiftSound();
+  setTimeout(function(){
+    showConfetti();
+    showGiftNotification(gift.icon || "🎁", "🎉 Новый подарок!", gift.name + " от " + (gift.fromNickname || "—"));
+  }, 100);
+}
+
+function subscribeIncomingGifts(){
+  if (!me) return;
+  if (incomingGiftsUnsub) incomingGiftsUnsub();
+  var seen = {};
+  incomingGiftsUnsub = db.collection("users").doc(me.uid).collection("gifts")
+    .orderBy("createdAt", "desc").limit(5)
+    .onSnapshot(function(snap){
+      snap.docChanges().forEach(function(ch){
+        if (ch.type === "added"){
+          var id = ch.doc.id;
+          if (seen[id]) return;
+          seen[id] = true;
+          var g = ch.doc.data();
+          if (g.createdAt && g.createdAt.toDate){
+            var age = Date.now() - g.createdAt.toDate().getTime();
+            if (age < 10000) celebrateGift(g);
+          }
+        }
+      });
+    }, function(e){ console.warn("incoming gifts:", e); });
+}
+
+function updateGiftCooldown(){
+  var el = $("giftCooldown"); var btn = $("giftCreateSend");
+  if (!el || !btn) return;
+  var left = GIFT_COOLDOWN_MS - (Date.now() - lastGiftTime);
+  if (left > 0){ el.textContent = "⏱ Кулдаун: " + Math.ceil(left/1000) + " сек"; btn.disabled = true; }
+  else { el.textContent = ""; btn.disabled = false; }
+}
+setInterval(updateGiftCooldown, 1000);
+
+on("giftUploadBtn", "click", function(){ $("giftImgFile").click(); });
+on("giftPreview", "click", function(){ $("giftImgFile").click(); });
+on("giftClearImgBtn", "click", function(){ pendingGiftImage = null; $("giftPreview").innerHTML = "🎁"; });
+on("giftImgFile", "change", function(ev){
+  var f = ev.target.files[0]; ev.target.value = "";
+  if (!f) return;
+  if (f.size > 5 * 1024 * 1024){ toast("Фото больше 5 МБ", "error"); return; }
+  compressImage(f, 256, 0.85, function(b64){
+    pendingGiftImage = b64;
+    $("giftPreview").innerHTML = '<img src="' + b64 + '">';
+  });
+});
+
+function loadGiftTemplates(){
+  var container = $("giftTemplates");
+  if (!container || !me) return;
+  container.innerHTML = '<div style="color:#6b7280;font-size:12px">Загрузка...</div>';
+  db.collection("users").doc(me.uid).collection("giftTemplates")
+    .orderBy("createdAt", "desc").limit(20).get()
+    .then(function(snap){
+      if (snap.empty){ container.innerHTML = '<div style="color:#6b7280;font-size:12px;font-style:italic">Нет сохранённых</div>'; return; }
+      var h = "";
+      snap.forEach(function(doc){
+        var t = doc.data();
+        h += '<div class="template-chip" data-tid="' + doc.id + '">' +
+          '<span>' + (t.image ? '🖼' : esc(t.icon || "🎁")) + '</span>' +
+          '<span>' + esc(t.name) + '</span>' +
+          '<span style="color:#fbbf24">🔥' + (t.price || 0) + '</span>' +
+          '<span class="del-t" data-tdel="' + doc.id + '">✕</span>' +
+        '</div>';
+      });
+      container.innerHTML = h;
+      var chips = container.querySelectorAll(".template-chip");
+      for (var i = 0; i < chips.length; i++){
+        (function(c){
+          c.addEventListener("click", function(ev){
+            if (ev.target.classList.contains("del-t")) return;
+            db.collection("users").doc(me.uid).collection("giftTemplates").doc(c.getAttribute("data-tid")).get().then(function(d){
+              if (!d.exists) return;
+              var t = d.data();
+              $("giftCustomName").value = t.name || "";
+              $("giftCustomIcon").value = t.icon || "";
+              $("giftCustomRarity").value = t.rarity || "common";
+              $("giftCustomPrice").value = t.price || 100;
+              pendingGiftImage = t.image || null;
+              $("giftPreview").innerHTML = t.image ? '<img src="' + t.image + '">' : esc(t.icon || "🎁");
+            });
+          });
+        })(chips[i]);
+      }
+      var dels = container.querySelectorAll("[data-tdel]");
+      for (var j = 0; j < dels.length; j++){
+        (function(d){
+          d.addEventListener("click", function(ev){
+            ev.stopPropagation();
+            if (!confirm("Удалить шаблон?")) return;
+            db.collection("users").doc(me.uid).collection("giftTemplates").doc(d.getAttribute("data-tdel")).delete()
+              .then(function(){ loadGiftTemplates(); })
+              .catch(function(e){ toast(e.message, "error"); });
+          });
+        })(dels[j]);
+      }
+    }).catch(function(e){ container.innerHTML = '<div style="color:#f87171;font-size:12px">Ошибка: ' + esc(e.message) + '</div>'; });
+}
+
+on("giftSaveTemplate", "click", function(){
+  if (!me){ toast("Не авторизован", "error"); return; }
+  var name = $("giftCustomName").value.trim();
+  var icon = $("giftCustomIcon").value.trim() || "🎁";
+  var rarity = $("giftCustomRarity").value;
+  var price = parseInt($("giftCustomPrice").value) || 0;
+  if (!name){ toast("Введи название", "error"); return; }
+  if (price < 1){ toast("Цена от 1 🔥", "error"); return; }
+  var chain = pendingGiftImage ? uploadImgBB(pendingGiftImage).then(function(url){ return url; }) : Promise.resolve(null);
+  chain.then(function(imageUrl){
+    return db.collection("users").doc(me.uid).collection("giftTemplates").add({
+      name: name, icon: icon, image: imageUrl || "",
+      rarity: rarity, price: price,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }).then(function(){ toast("💾 Шаблон сохранён", "success"); loadGiftTemplates(); })
+    .catch(function(e){ toast("❌ " + e.message, "error"); });
+});
+
+on("giftCreateSend", "click", sendGift);
+on("giftCancel", "click", function(){
+  $("giftSendModal").classList.remove("show");
+  $("giftSendModal").removeAttribute("data-target");
+  $("giftCustomName").value = ""; $("giftCustomIcon").value = "";
+  $("giftCustomRarity").value = "common"; $("giftCustomPrice").value = "100";
+  pendingGiftImage = null; $("giftPreview").innerHTML = "🎁";
+});
+on("giftViewClose", "click", function(){ $("giftViewModal").classList.remove("show"); });
+on("giftSelfBtn", "click", function(){
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  showGiftSend(me.uid, profile.nickname || profile.username || "Себе");
+});
+</script><script>
+function initShop(){
+  if (shopInitialized) return;
+  shopInitialized = true;
+  db.collection("shop").limit(1).get().then(function(snap){
+    if (snap.empty && isOwner()){
+      var chain = Promise.resolve();
+      PRESET_GIFTS.forEach(function(g){
+        chain = chain.then(function(){
+          return db.collection("shop").doc(g.id).set({
+            name: g.name, icon: g.icon, rarity: g.rarity, price: g.price,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+      });
+      chain.catch(function(){});
+    }
+  });
+}
+
+function openShop(){
+  if (!me){ toast("Сначала войди", "error"); return; }
+  $("shopModal").classList.add("show");
+  loadShopBalance(); loadShopItems();
+}
+
+function loadShopBalance(){
+  if (!me) return;
+  db.collection("users").doc(me.uid).get().then(function(d){
+    if (d.exists && $("shopMyBalance")) $("shopMyBalance").textContent = d.data().fire || 0;
+  }).catch(function(){});
+}
+
+function loadShopItems(){
+  var list = $("shopList");
+  list.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;grid-column:1/-1">Загрузка...</div>';
+  db.collection("shop").orderBy("price", "asc").get().then(function(snap){
+    if (snap.empty){ list.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;grid-column:1/-1">Магазин пуст</div>'; return; }
+    var h = "";
+    snap.forEach(function(doc){
+      var g = doc.data(); var id = doc.id;
+      var iconHtml = g.image ? '<img src="' + esc(g.image) + '" style="max-width:52px;max-height:52px;border-radius:10px">' : esc(g.icon || "🎁");
+      h += '<div class="shop-card ' + (g.rarity||"common") + '">' +
+        (isOwner() ? '<button class="del-btn" data-shopdel="' + id + '">✕</button>' : '') +
+        '<div class="gift-icon">' + iconHtml + '</div>' +
+        '<div class="gift-name">' + esc(g.name) + '</div>' +
+        '<div class="gift-rarity-label ' + (g.rarity||"common") + '">' + (g.rarity||"common") + '</div>' +
+        '<div class="gift-price">🔥 ' + (g.price || 0) + '</div>' +
+        '<button class="buy-btn" data-shopbuy="' + id + '">Купить</button>' +
+      '</div>';
+    });
+    list.innerHTML = h;
+    var buyBtns = list.querySelectorAll("[data-shopbuy]");
+    for (var i = 0; i < buyBtns.length; i++){
+      (function(b){
+        b.addEventListener("click", function(){
+          var id = b.getAttribute("data-shopbuy");
+          db.collection("shop").doc(id).get().then(function(d){ if (d.exists) openShopBuy(id, d.data()); });
+        });
+      })(buyBtns[i]);
+    }
+    var delBtns = list.querySelectorAll("[data-shopdel]");
+    for (var j = 0; j < delBtns.length; j++){
+      (function(b){
+        b.addEventListener("click", function(ev){
+          ev.stopPropagation();
+          if (!isOwner()) return;
+          if (!confirm("Удалить?")) return;
+          db.collection("shop").doc(b.getAttribute("data-shopdel")).delete()
+            .then(function(){ toast("Удалено", "success"); loadShopItems(); })
+            .catch(function(e){ toast(e.message, "error"); });
+        });
+      })(delBtns[j]);
+    }
+  }).catch(function(e){ list.innerHTML = '<div style="color:#f87171;padding:20px;grid-column:1/-1">Ошибка: ' + esc(e.message) + '</div>'; });
+  if ($("shopAddBtn")) $("shopAddBtn").classList.toggle("hidden", !isOwner());
+}
+
+function openShopBuy(shopId, gift){
+  $("shopBuyModal").setAttribute("data-shop", shopId);
+  var preview = $("shopBuyPreview");
+  var rarityLabels = { common:"Обычный", rare:"Редкий", epic:"Эпический", legendary:"Легендарный" };
+  var iconHtml = gift.image ? '<img src="' + esc(gift.image) + '" style="max-width:80px;max-height:80px;border-radius:10px">' : '<div style="font-size:64px;line-height:1">' + esc(gift.icon || "🎁") + '</div>';
+  preview.innerHTML =
+    '<div style="margin-bottom:8px">' + iconHtml + '</div>' +
+    '<div style="font-size:18px;font-weight:700;margin-bottom:4px">' + esc(gift.name) + '</div>' +
+    '<div style="font-size:12px;color:#8a93a6;margin-bottom:8px">' + (rarityLabels[gift.rarity] || gift.rarity) + '</div>' +
+    '<div style="font-size:22px;font-weight:800;color:#fbbf24">🔥 ' + (gift.price || 0) + '</div>';
+  $("shopBuyRecipient").value = "";
+  $("shopBuyModal").classList.add("show");
+}
+
+function buyShopGift(){
+  var shopId = $("shopBuyModal").getAttribute("data-shop");
+  if (!shopId){ toast("Нет подарка", "error"); return; }
+  var recipientInput = $("shopBuyRecipient").value.trim().toLowerCase().replace(/^@/, "");
+  if (!recipientInput){ purchaseFor(me.uid, "себе", shopId); return; }
+  if (!validUsername(recipientInput)){ toast("Некорректный @username", "error"); return; }
+  db.collection("usernames").doc(recipientInput).get().then(function(doc){
+    if (!doc.exists) throw new Error("Пользователь не найден");
+    purchaseFor(doc.data().uid, "@" + recipientInput, shopId);
+  }).catch(function(e){ toast("❌ " + e.message, "error"); });
+}
+
+function purchaseFor(targetUid, targetName, shopId){
+  if (shopBuying) return;
+  shopBuying = true;
+  db.collection("shop").doc(shopId).get().then(function(sDoc){
+    if (!sDoc.exists) throw new Error("Подарок не найден");
+    var gift = sDoc.data();
+    var price = gift.price || 0;
+    return db.collection("users").doc(me.uid).get().then(function(myDoc){
+      if (!myDoc.exists) throw new Error("Профиль не найден");
+      var myFire = myDoc.data().fire || 0;
+      if (myFire < price) throw new Error("Недостаточно 🔥: " + myFire + " / " + price);
+      var purchase = {
+        name: gift.name, icon: gift.icon, image: gift.image || "",
+        rarity: gift.rarity, price: price,
+        from: me.uid, fromNickname: profile.nickname || profile.username,
+        to: targetUid, shopId: shopId,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      return db.collection("users").doc(targetUid).collection("gifts").add(purchase)
+        .then(function(ref){
+          return db.collection("users").doc(me.uid).collection("sentGifts").add(purchase).then(function(){ return ref; });
+        })
+        .then(function(){
+          return db.collection("users").doc(me.uid).update({
+            fire: firebase.firestore.FieldValue.increment(-price)
+          });
+        });
+    });
+  }).then(function(){
+    shopBuying = false;
+    toast("🎁 Куплено", "success");
+    loadMyFire(); loadShopBalance();
+    $("shopBuyModal").classList.remove("show");
+    $("shopBuyRecipient").value = "";
+  }).catch(function(e){ shopBuying = false; toast("❌ " + e.message, "error"); });
+}
+
+on("shopBtn", "click", function(){ openShop(); initShop(); });
+on("shopClose", "click", function(){ $("shopModal").classList.remove("show"); });
+on("shopAddBtn", "click", function(){
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  $("shopGiftName").value = ""; $("shopGiftIcon").value = "";
+  $("shopGiftRarity").value = "common"; $("shopGiftPrice").value = "100";
+  $("shopAddModal").classList.add("show");
+});
+on("shopGiftSave", "click", function(){
+  if (!isOwner()){ toast("Только владелец", "error"); return; }
+  var name = $("shopGiftName").value.trim();
+  var icon = $("shopGiftIcon").value.trim() || "🎁";
+  var rarity = $("shopGiftRarity").value;
+  var price = parseInt($("shopGiftPrice").value) || 0;
+  if (!name){ toast("Введи название", "error"); return; }
+  if (price < 1){ toast("Цена от 1 🔥", "error"); return; }
+  var id = "gift_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+  db.collection("shop").doc(id).set({
+    name: name, icon: icon, rarity: rarity, price: price,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){ toast("✅ Добавлено", "success"); $("shopAddModal").classList.remove("show"); loadShopItems(); })
+    .catch(function(e){ toast("❌ " + e.message, "error"); });
+});
+on("shopGiftCancel", "click", function(){ $("shopAddModal").classList.remove("show"); });
+on("shopBuyCancel", "click", function(){ $("shopBuyModal").classList.remove("show"); $("shopBuyRecipient").value = ""; });
+on("shopBuyConfirm", "click", buyShopGift);
+
 $("app").classList.add("hidden");
-console.log("Towa v4.0 loaded ✓");
+console.log("Towa v7.0 loaded ✓");
 </script>
 </body>
 </html>
