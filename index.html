@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Towa</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0f0c29;color:#fff;height:100vh;overflow:hidden}
+.hidden{display:none!important}
+button{font-family:inherit;cursor:pointer}
+
+/* ===== ЭКРАН ВХОДА ===== */
+#authScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#0f0c29;z-index:100}
+#authBox{background:#161a22;border:2px solid #00d2ff;border-radius:16px;padding:22px;width:100%;max-width:360px}
+#authBox h1{text-align:center;color:#00d2ff;font-size:24px;margin-bottom:6px}
+#authBox .sub{text-align:center;color:#8a93a6;font-size:12px;margin-bottom:18px}
+#authBox input{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0a0c10;color:#fff;font-size:14px;margin-bottom:8px;outline:none}
+#authBox input:focus{border-color:#00d2ff}
+#authBox button{width:100%;padding:12px;border:0;border-radius:8px;font-size:14px;font-weight:bold;margin-bottom:6px}
+.btn-primary{background:#00d2ff;color:#000}
+.btn-alt{background:#374151;color:#fff}
+#authMsg{color:#f87171;font-size:12px;text-align:center;min-height:16px;margin-top:6px}
+#avatarRow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+#avatarPreview{width:64px;height:64px;border-radius:50%;background:#0a0c10;border:2px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;flex-shrink:0}
+#avatarPreview img{width:100%;height:100%;object-fit:cover}
+#avatarBtn{background:#374151;color:#fff;padding:8px 12px;border:0;border-radius:8px;font-size:12px}
+.usernameHint{font-size:11px;color:#6b7280;margin-top:-4px;margin-bottom:8px}
+
+/* ===== ОСНОВНОЙ ЭКРАН ===== */
+#app{display:flex;height:100vh}
+#sidebar{width:320px;background:#161a22;border-right:1px solid #232833;display:flex;flex-direction:column;flex-shrink:0}
+#sidebarHeader{padding:12px;border-bottom:1px solid #232833;display:flex;align-items:center;gap:8px}
+#sidebarHeader h2{font-size:16px;color:#00d2ff;flex:1}
+#sidebarHeader button{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:6px 10px;border-radius:6px;font-size:12px}
+#meBadge{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0f1115;border-bottom:1px solid #232833;font-size:12px}
+#meAvatar{width:28px;height:28px;border-radius:50%;background:#0a0c10;border:1px solid #2a303c;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+#meAvatar img{width:100%;height:100%;object-fit:cover}
+#meUsername{color:#00d2ff}
+
+#chatList{flex:1;overflow-y:auto}
+.chat-item{padding:10px 12px;border-bottom:1px solid #1e232e;cursor:pointer;display:flex;gap:10px;align-items:center}
+.chat-item:hover{background:#1a1f2e}
+.chat-item.active{background:#1a2a3a;border-left:3px solid #00d2ff}
+.chat-avatar{width:44px;height:44px;border-radius:50%;background:#0a0c10;border:1px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex-shrink:0}
+.chat-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-info{flex:1;min-width:0}
+.chat-title{font-size:14px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-last{font-size:11px;color:#8a93a6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+
+#main{flex:1;display:flex;flex-direction:column;background:#0a0c10}
+#mainHeader{padding:12px;border-bottom:1px solid #232833;display:flex;align-items:center;gap:10px;background:#161a22}
+#mainHeader h3{font-size:15px;flex:1}
+#mainHeader .sub{font-size:11px;color:#8a93a6}
+#mainHeader button{background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:6px 10px;border-radius:6px;font-size:12px}
+
+#messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:70%;padding:8px 12px;border-radius:12px;background:#1e1e3a;font-size:13px;line-height:1.4;word-break:break-word;position:relative}
+.msg.mine{background:#00d2ff;color:#000;align-self:flex-end}
+.msg .sender{font-size:11px;color:#8a93a6;font-weight:bold;margin-bottom:3px}
+.msg.mine .sender{color:#0a3a4a}
+.msg img{max-width:100%;border-radius:8px;margin-top:4px;display:block;cursor:pointer}
+.msg .time{font-size:10px;color:#8a93a6;margin-top:4px;text-align:right}
+.msg.mine .time{color:#0a3a4a}
+
+#msgInputBar{padding:10px;border-top:1px solid #232833;background:#161a22;display:flex;gap:6px;align-items:center}
+#msgInputBar input[type=text]{flex:1;padding:11px;border-radius:10px;border:1px solid #2a303c;background:#0a0c10;color:#fff;font-size:14px;outline:none}
+#msgInputBar input[type=text]:focus{border-color:#00d2ff}
+#msgInputBar button{padding:10px 14px;border-radius:10px;border:0;font-weight:bold;font-size:14px}
+#fileBtn{background:#374151;color:#fff}
+#sendBtn{background:#00d2ff;color:#000}
+
+#empty{flex:1;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;flex-direction:column;gap:8px}
+#empty .big{font-size:64px}
+
+/* ===== МОДАЛКИ ===== */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:200}
+.modal.show{display:flex}
+.modal-box{background:#161a22;border-radius:14px;padding:20px;width:100%;max-width:400px;border:1px solid #00d2ff;max-height:90vh;overflow-y:auto}
+.modal-box h3{color:#00d2ff;font-size:16px;margin-bottom:12px}
+.modal-box input,.modal-box select{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0a0c10;color:#fff;font-size:13px;margin-bottom:8px;outline:none}
+.modal-box input:focus{border-color:#00d2ff}
+.modal-box button{width:100%;padding:11px;border:0;border-radius:8px;font-weight:bold;font-size:14px;margin-top:6px}
+.modal-actions{display:flex;gap:8px;margin-top:8px}
+.modal-actions button{flex:1}
+.tabs{display:flex;gap:4px;margin-bottom:12px}
+.tabs button{flex:1;background:transparent;border:1px solid #2a303c;color:#a8b0c2;padding:8px;border-radius:6px;font-size:12px;font-weight:normal}
+.tabs button.active{background:#00d2ff;color:#000;border-color:#00d2ff;font-weight:bold}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#00d2ff;color:#000;padding:10px 20px;border-radius:10px;font-weight:bold;z-index:999;display:none;font-size:13px;max-width:90%}
+
+@media (max-width:700px){
+  #app{flex-direction:column}
+  #sidebar{width:100%;height:100%}
+  #main{display:none}
+  #app.chatOpen #sidebar{display:none}
+  #app.chatOpen #main{display:flex}
+}
+</style>
+</head>
+<body>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="authScreen">
+  <div id="authBox">
+    <h1>💬 Towa</h1>
+    <div class="sub" id="authSub">Вход</div>
+
+    <input id="emailInput" type="email" placeholder="Email">
+    <input id="passInput" type="password" placeholder="Пароль">
+
+    <div id="regFields" class="hidden">
+      <input id="nickInput" type="text" placeholder="Имя (Ник)" maxlength="24">
+      <input id="userInput" type="text" placeholder="@username" maxlength="20">
+      <div class="usernameHint">3–20 символов: a–z, 0–9, _</div>
+
+      <div id="avatarRow">
+        <div id="avatarPreview">👤</div>
+        <button id="avatarBtn" type="button">📷 Загрузить фото</button>
+        <input id="avatarFile" type="file" accept="image/*" style="display:none">
+      </div>
+    </div>
+
+    <button id="doLogin" class="btn-primary">Войти</button>
+    <button id="switchMode" class="btn-alt">Создать аккаунт</button>
+    <div id="authMsg"></div>
+  </div>
+</div>
+
+<!-- ОСНОВНОЙ ЭКРАН -->
+<div id="app" class="hidden">
+  <div id="sidebar">
+    <div id="sidebarHeader">
+      <h2>💬 Towa</h2>
+      <button id="btnNew">+ Чат</button>
+      <button id="btnProfile">👤</button>
+    </div>
+    <div id="meBadge">
+      <div id="meAvatar">👤</div>
+      <span id="meNick">—</span>
+      <span id="meUsername">@—</span>
+    </div>
+    <div id="chatList"></div>
+  </div>
+
+  <div id="main">
+    <div id="empty">
+      <div class="big">💬</div>
+      <div>Выбери чат или создай новый</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="newChatModal">
+  <div class="modal-box">
+    <h3>Создать</h3>
+    <div class="tabs">
+      <button data-tab="private" class="active">Личный чат</button>
+      <button data-tab="group">Группа</button>
+      <button data-tab="channel">Канал</button>
+    </div>
+
+    <div id="privateTab">
+      <input id="privateUsername" placeholder="@username собеседника" maxlength="20">
+      <button id="createPrivate" class="btn-primary">Открыть чат</button>
+    </div>
+
+    <div id="groupTab" class="hidden">
+      <input id="groupTitle" placeholder="Название группы" maxlength="40">
+      <input id="groupUsers" placeholder="@username через запятую">
+      <button id="createGroup" class="btn-primary">Создать группу</button>
+    </div>
+
+    <div id="channelTab" class="hidden">
+      <input id="channelTitle" placeholder="Название канала" maxlength="40">
+      <input id="channelUsers" placeholder="@username через запятую">
+      <button id="createChannel" class="btn-primary">Создать канал</button>
+    </div>
+
+    <button id="closeNewChat" class="btn-alt">Отмена</button>
+  </div>
+</div>
+
+<div class="modal" id="profileModal">
+  <div class="modal-box">
+    <h3>Профиль</h3>
+    <div id="avatarRow2">
+      <div id="avatarPreview2" style="width:64px;height:64px;border-radius:50%;background:#0a0c10;border:2px solid #2a303c;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden">
+        👤
+      </div>
+      <button id="avatarBtn2" style="background:#374151;color:#fff;padding:8px 12px;border:0;border-radius:8px;font-size:12px;width:auto;margin-top:0">📷 Сменить фото</button>
+      <input id="avatarFile2" type="file" accept="image/*" style="display:none">
+    </div>
+    <input id="profNick" placeholder="Имя">
+    <input id="profUsername" placeholder="@username">
+    <div class="usernameHint">Смена @username освободит старый</div>
+    <div class="modal-actions">
+      <button id="saveProfile" class="btn-primary">Сохранить</button>
+      <button id="logoutBtn" class="btn-alt">Выйти</button>
+    </div>
+    <button id="closeProfile" class="btn-alt">Закрыть</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div><script>
+/* ===== КОНФИГ ===== */
+var firebaseConfig = {
+  apiKey: "AIzaSyB44sV-thaBp8qKLdfZFm-DfzcJoxpa2j0",
+  authDomain: "towaserver-d69a8.firebaseapp.com",
+  projectId: "towaserver-d69a8",
+  storageBucket: "towaserver-d69a8.firebasestorage.app",
+  messagingSenderId: "142465893423",
+  appId: "1:142465893423:web:da3e596903146925bd72da"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+/* ===== IMB.BB КЛЮЧ ===== */
+var IMGBB_KEY = "0f26cbc872184d305fcf99072a137c35";
+
+/* ===== СОСТОЯНИЕ ===== */
+var me = null;              // firebase user
+var profile = null;         // doc data users/{uid}
+var chats = [];             // [{id, type, title, participants, lastMessage, lastTime}]
+var openChatId = null;
+var msgUnsub = null;
+var chatsUnsub = null;
+var pendingAvatar = null;   // base64 для регистрации
+var pendingAvatar2 = null;  // base64 для профиля
+var regMode = false;
+var currentTab = "private";
+
+/* ===== УТИЛИТЫ ===== */
+function $(id){ return document.getElementById(id); }
+function toast(m){
+  var t = $("toast");
+  t.textContent = m;
+  t.style.display = "block";
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.style.display = "none"; }, 2200);
+}
+function esc(s){
+  if (s == null) return "";
+  return String(s).split("&").join("&amp;")
+    .split(String.fromCharCode(60)).join("&lt;")
+    .split(String.fromCharCode(62)).join("&gt;")
+    .split('"').join("&quot;");
+}
+function fmtTime(ts){
+  if (!ts) return "";
+  var d = ts.toDate ? ts.toDate() : new Date(ts);
+  var now = new Date();
+  var sameDay = d.toDateString() === now.toDateString();
+  var hh = ("0" + d.getHours()).slice(-2);
+  var mm = ("0" + d.getMinutes()).slice(-2);
+  if (sameDay) return hh + ":" + mm;
+  return d.toLocaleDateString("ru-RU") + " " + hh + ":" + mm;
+}
+function validUsername(u){
+  return /^[a-zA-Z0-9_]{3,20}$/.test(u);
+}
+
+/* ===== АВАТАР: сжатие до 256x256 JPEG ===== */
+function compressImage(file, maxSize, quality, cb){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement("canvas");
+      var w = img.width, h = img.height;
+      if (w > h){ if (w > maxSize){ h = h * maxSize / w; w = maxSize; } }
+      else { if (h > maxSize){ w = w * maxSize / h; h = maxSize; } }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ===== ЗАГРУЗКА ФОТО НА IMGBB ===== */
+function uploadImgBB(base64){
+  // base64 = "data:image/jpeg;base64,...."
+  var base64Clean = base64.split(",")[1];
+  var form = new FormData();
+  form.append("key", IMGBB_KEY);
+  form.append("image", base64Clean);
+  return fetch("https://api.imgbb.com/1/upload", {
+    method: "POST",
+    body: form
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    if (j && j.data && j.data.url) return j.data.url;
+    throw new Error((j && j.error && j.error.message) || "imgbb error");
+  });
+}
+
+/* ===== ПЕРЕКЛЮЧЕНИЕ ВХОД/РЕГИСТРАЦИЯ ===== */
+$("switchMode").onclick = function(){
+  regMode = !regMode;
+  $("regFields").classList.toggle("hidden", !regMode);
+  $("authSub").textContent = regMode ? "Регистрация" : "Вход";
+  $("doLogin").textContent = regMode ? "Создать аккаунт" : "Войти";
+  $("switchMode").textContent = regMode ? "Уже есть аккаунт" : "Создать аккаунт";
+  $("authMsg").textContent = "";
+  $("doLogin").className = regMode ? "btn-alt" : "btn-primary";
+};
+
+/* ===== ВЫБОР АВАТАРА ПРИ РЕГИСТРАЦИИ ===== */
+$("avatarBtn").onclick = function(){ $("avatarFile").click(); };
+$("avatarFile").onchange = function(ev){
+  var f = ev.target.files[0];
+  if (!f) return;
+  compressImage(f, 256, 0.85, function(b64){
+    pendingAvatar = b64;
+    $("avatarPreview").innerHTML = '<img src="' + b64 + '">';
+  });
+};
+
+/* ===== ВЫБОР АВАТАРА В ПРОФИЛЕ ===== */
+$("avatarBtn2").onclick = function(){ $("avatarFile2").click(); };
+$("avatarFile2").onchange = function(ev){
+  var f = ev.target.files[0];
+  if (!f) return;
+  compressImage(f, 256, 0.85, function(b64){
+    pendingAvatar2 = b64;
+    $("avatarPreview2").innerHTML = '<img src="' + b64 + '">';
+  });
+};
+
+/* ===== ВХОД / РЕГИСТРАЦИЯ ===== */
+$("doLogin").onclick = function(){
+  var email = $("emailInput").value.trim();
+  var pass = $("passInput").value;
+  $("authMsg").textContent = "";
+  if (!email || !pass){ $("authMsg").textContent = "Заполни email и пароль"; return; }
+
+  if (!regMode){
+    auth.signInWithEmailAndPassword(email, pass).catch(function(e){
+      $("authMsg").textContent = e.code + ": " + e.message;
+    });
+    return;
+  }
+
+  // Регистрация
+  var nick = $("nickInput").value.trim();
+  var uname = $("userInput").value.trim().toLowerCase().replace(/^@/, "");
+  if (!nick){ $("authMsg").textContent = "Введи имя"; return; }
+  if (!validUsername(uname)){ $("authMsg").textContent = "username: 3-20 символов, a-z 0-9 _"; return; }
+  if (pass.length < 6){ $("authMsg").textContent = "Пароль минимум 6 символов"; return; }
+
+  // проверка свободен ли username
+  db.collection("usernames").doc(uname).get().then(function(doc){
+    if (doc.exists){
+      $("authMsg").textContent = "@" + uname + " уже занят";
+      throw new Error("taken");
+    }
+    return auth.createUserWithEmailAndPassword(email, pass);
+  }).then(function(cred){
+    var uid = cred.user.uid;
+    var avatarUrl = "";
+    // если выбрал фото — грузим в ImgBB
+    var chain = pendingAvatar
+      ? uploadImgBB(pendingAvatar).then(function(url){ avatarUrl = url; })
+      : Promise.resolve();
+
+    return chain.then(function(){
+      // пишем username (замок)
+      return db.collection("usernames").doc(uname).set({
+        uid: uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }).then(function(){
+      // пишем профиль
+      return db.collection("users").doc(uid).set({
+        email: email,
+        nickname: nick,
+        username: uname,
+        avatar: avatarUrl,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+  }).catch(function(e){
+    if (e.message === "taken") return;
+    $("authMsg").textContent = e.code ? (e.code + ": " + e.message) : e.message;
+  });
+};
+
+/* ===== СОСТОЯНИЕ АВТОРИЗАЦИИ ===== */
+auth.onAuthStateChanged(function(user){
+  if (!user){
+    me = null;
+    profile = null;
+    $("app").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+    return;
+  }
+  me = user;
+  db.collection("users").doc(user.uid).get().then(function(doc){
+    if (!doc.exists){
+      // пользователь без профиля (не через регистрацию) — разлогиним
+      auth.signOut();
+      return;
+    }
+    profile = doc.data();
+    $("authScreen").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    renderMe();
+    subscribeChats();
+  });
+});
+
+function renderMe(){
+  if (!profile) return;
+  $("meNick").textContent = profile.nickname || "—";
+  $("meUsername").textContent = "@" + (profile.username || "—");
+  var av = $("meAvatar");
+  if (profile.avatar) av.innerHTML = '<img src="' + profile.avatar + '">';
+  else av.textContent = "👤";
+}
+
+/* ===== СПИСОК ЧАТОВ ===== */
+function subscribeChats(){
+  if (chatsUnsub) chatsUnsub();
+  chatsUnsub = db.collection("chats")
+    .where("participants", "array-contains", me.uid)
+    .onSnapshot(function(snap){
+      chats = [];
+      snap.forEach(function(doc){
+        var d = doc.data();
+        d.id = doc.id;
+        chats.push(d);
+      });
+      chats.sort(function(a,b){
+        var ta = a.lastTime ? (a.lastTime.toDate ? a.lastTime.toDate().getTime() : 0) : 0;
+        var tb = b.lastTime ? (b.lastTime.toDate ? b.lastTime.toDate().getTime() : 0) : 0;
+        return tb - ta;
+      });
+      renderChatList();
+    }, function(err){
+      console.warn("chats:", err);
+      toast("Ошибка чатов: " + err.message);
+    });
+}
+
+function renderChatList(){
+  var box = $("chatList");
+  if (!chats.length){
+    box.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280;font-size:12px">Нет чатов. Нажми +Чат</div>';
+    return;
+  }
+  var h = "";
+  for (var i = 0; i < chats.length; i++){
+    var c = chats[i];
+    var title = c.title || "Чат";
+    if (c.type === "private"){
+      // для личного — имя собеседника
+      var other = (c.participants || []).find(function(u){ return u !== me.uid; });
+      title = c.titles && c.titles[other] ? c.titles[other] : "Личный чат";
+    }
+    var avatar = c.type === "channel" ? "📢" : c.type === "group" ? "👥" : "💬";
+    if (c.avatar) avatar = '<img src="' + c.avatar + '">';
+    var last = c.lastMessage || "";
+    if (c.lastMessageType === "photo") last = "📷 Фото";
+    h += '<div class="chat-item' + (c.id === openChatId ? " active" : "") + '" data-id="' + c.id + '">' +
+      '<div class="chat-avatar">' + avatar + '</div>' +
+      '<div class="chat-info">' +
+        '<div class="chat-title">' + esc(title) + '</div>' +
+        '<div class="chat-last">' + esc(last) + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  box.innerHTML = h;
+  var items = box.querySelectorAll(".chat-item");
+  for (var j = 0; j < items.length; j++){
+    items[j].onclick = function(){
+      openChat(this.getAttribute("data-id"));
+    };
+  }
+}
+
+/* ===== ОТКРЫТИЕ ЧАТА ===== */
+function openChat(chatId){
+  openChatId = chatId;
+  document.getElementById("app").classList.add("chatOpen");
+  renderChatList();
+
+  var chat = null;
+  for (var i = 0; i < chats.length; i++) if (chats[i].id === chatId) chat = chats[i];
+  if (!chat) return;
+
+  var title = chat.title || "Чат";
+  var sub = chat.type === "private" ? "личный" : chat.type === "group" ? "группа" : "канал";
+  if (chat.type === "private"){
+    var other = (chat.participants || []).find(function(u){ return u !== me.uid; });
+    title = (chat.titles && chat.titles[other]) || "Личный чат";
+  }
+
+  var canWrite = chat.type !== "channel" || (chat.admins || []).indexOf(me.uid) >= 0;
+
+  $("main").innerHTML =
+    '<div id="mainHeader">' +
+      '<button id="backBtn" style="display:none">←</button>' +
+      '<div style="flex:1">' +
+        '<h3>' + esc(title) + '</h3>' +
+        '<div class="sub">' + esc(sub) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="messages"></div>' +
+    (canWrite
+      ? '<div id="msgInputBar">' +
+          '<button id="fileBtn">📷</button>' +
+          '<input type="file" id="photoFile" accept="image/*" style="display:none">' +
+          '<input type="text" id="msgInput" placeholder="Написать...">' +
+          '<button id="sendBtn">➤</button>' +
+        '</div>'
+      : '<div style="padding:14px;text-align:center;color:#8a93a6;font-size:12px;border-top:1px solid #232833">Только админ может писать</div>'
+    );
+
+  // адаптив: кнопка назад
+  if (window.innerWidth <= 700){
+    var bb = $("backBtn");
+    bb.style.display = "block";
+    bb.onclick = function(){
+      document.getElementById("app").classList.remove("chatOpen");
+      openChatId = null;
+    };
+  }
+
+  if (canWrite){
+    $("sendBtn").onclick = sendText;
+    $("msgInput").addEventListener("keydown", function(e){
+      if (e.key === "Enter") sendText();
+    });
+    $("fileBtn").onclick = function(){ $("photoFile").click(); };
+    $("photoFile").onchange = sendPhoto;
+  }
+
+  subscribeMessages(chatId);
+}
+</script><script>
+/* ===== СООБЩЕНИЯ ===== */
+function subscribeMessages(chatId){
+  if (msgUnsub) msgUnsub();
+  var box = $("messages");
+  if (!box) return;
+  box.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:12px;padding:20px">Загрузка...</div>';
+
+  msgUnsub = db.collection("chats").doc(chatId).collection("messages")
+    .orderBy("createdAt", "asc")
+    .limit(100)
+    .onSnapshot(function(snap){
+      var m = $("messages");
+      if (!m) return;
+      m.innerHTML = "";
+      snap.forEach(function(doc){
+        var d = doc.data();
+        d.id = doc.id;
+        var mine = d.from === me.uid;
+        var div = document.createElement("div");
+        div.className = "msg" + (mine ? " mine" : "");
+        var avatarUrl = d.avatar || "";
+        var senderHtml = mine ? "" : '<div class="sender">' + esc(d.nickname || "?") + '</div>';
+        var textHtml = d.text ? '<div>' + esc(d.text) + '</div>' : '';
+        var photoHtml = d.photoUrl
+          ? '<img src="' + esc(d.photoUrl) + '" onclick="window.open(this.src)">'
+          : '';
+        var timeHtml = '<div class="time">' + fmtTime(d.createdAt) + '</div>';
+        div.innerHTML = senderHtml + textHtml + photoHtml + timeHtml;
+        m.appendChild(div);
+      });
+      m.scrollTop = m.scrollHeight;
+    }, function(err){
+      console.warn("messages:", err);
+      var m = $("messages");
+      if (m) m.innerHTML = '<div style="color:#f87171;font-size:12px">Ошибка: ' + esc(err.message) + '</div>';
+    });
+}
+
+/* ===== ОТПРАВКА ТЕКСТА ===== */
+function sendText(){
+  var inp = $("msgInput");
+  var text = inp.value.trim();
+  if (!text) return;
+  if (!openChatId) return;
+  inp.value = "";
+  var chatRef = db.collection("chats").doc(openChatId);
+  var msgRef = chatRef.collection("messages").doc();
+
+  var now = firebase.firestore.FieldValue.serverTimestamp();
+  msgRef.set({
+    from: me.uid,
+    nickname: profile.nickname,
+    avatar: profile.avatar || "",
+    text: text,
+    photoUrl: "",
+    createdAt: now
+  }).then(function(){
+    return chatRef.update({
+      lastMessage: text,
+      lastMessageType: "text",
+      lastTime: now
+    });
+  }).catch(function(e){ toast("Ошибка: " + e.message); });
+}
+
+/* ===== ОТПРАВКА ФОТО ===== */
+function sendPhoto(ev){
+  var file = ev.target.files[0];
+  ev.target.value = "";
+  if (!file || !openChatId) return;
+  if (file.size > 32 * 1024 * 1024){ toast("Фото больше 32 МБ"); return; }
+
+  toast("📤 Загрузка фото...");
+  // сжимаем чтобы быстрее
+  compressImage(file, 1600, 0.85, function(b64){
+    uploadImgBB(b64).then(function(url){
+      var chatRef = db.collection("chats").doc(openChatId);
+      var msgRef = chatRef.collection("messages").doc();
+      var now = firebase.firestore.FieldValue.serverTimestamp();
+      return msgRef.set({
+        from: me.uid,
+        nickname: profile.nickname,
+        avatar: profile.avatar || "",
+        text: "",
+        photoUrl: url,
+        createdAt: now
+      }).then(function(){
+        return chatRef.update({
+          lastMessage: "📷 Фото",
+          lastMessageType: "photo",
+          lastTime: now
+        });
+      });
+    }).then(function(){
+      toast("✅ Отправлено");
+    }).catch(function(e){
+      toast("❌ " + e.message);
+    });
+  });
+}
+
+/* ===== МОДАЛКА НОВОГО ЧАТА ===== */
+$("btnNew").onclick = function(){
+  $("newChatModal").classList.add("show");
+};
+$("closeNewChat").onclick = function(){
+  $("newChatModal").classList.remove("show");
+};
+var tabBtns = document.querySelectorAll("#newChatModal .tabs button");
+for (var i = 0; i < tabBtns.length; i++){
+  tabBtns[i].onclick = function(){
+    for (var j = 0; j < tabBtns.length; j++) tabBtns[j].classList.remove("active");
+    this.classList.add("active");
+    currentTab = this.getAttribute("data-tab");
+    $("privateTab").classList.toggle("hidden", currentTab !== "private");
+    $("groupTab").classList.toggle("hidden", currentTab !== "group");
+    $("channelTab").classList.toggle("hidden", currentTab !== "channel");
+  };
+}
+
+/* ===== ЛИЧНЫЙ ЧАТ ===== */
+$("createPrivate").onclick = function(){
+  var uname = $("privateUsername").value.trim().toLowerCase().replace(/^@/, "");
+  if (!validUsername(uname)){ toast("Некорректный @username"); return; }
+
+  db.collection("usernames").doc(uname).get().then(function(doc){
+    if (!doc.exists) throw new Error("Пользователь не найден");
+    var otherUid = doc.data().uid;
+    if (otherUid === me.uid) throw new Error("Это ты сам");
+
+    // ищем существующий личный чат
+    return db.collection("chats")
+      .where("type", "==", "private")
+      .where("participants", "array-contains", me.uid)
+      .get()
+      .then(function(snap){
+        var existing = null;
+        snap.forEach(function(d){
+          var dd = d.data();
+          if ((dd.participants || []).indexOf(otherUid) >= 0 && dd.participants.length === 2){
+            existing = d.id;
+          }
+        });
+        if (existing){
+          $("newChatModal").classList.remove("show");
+          openChat(existing);
+          throw new Error("done");
+        }
+        // создаём новый
+        return db.collection("users").doc(otherUid).get().then(function(otherDoc){
+          var otherData = otherDoc.data() || {};
+          var now = firebase.firestore.FieldValue.serverTimestamp();
+          return db.collection("chats").add({
+            type: "private",
+            participants: [me.uid, otherUid],
+            titles: (function(){
+              var t = {};
+              t[me.uid] = profile.nickname || profile.username;
+              t[otherUid] = otherData.nickname || otherData.username || "User";
+              return t;
+            })(),
+            lastMessage: "",
+            lastMessageType: "text",
+            lastTime: now,
+            createdAt: now
+          });
+        });
+      });
+  }).then(function(ref){
+    if (ref && ref.id){
+      $("newChatModal").classList.remove("show");
+      openChat(ref.id);
+    }
+  }).catch(function(e){
+    if (e.message === "done") return;
+    toast(e.message);
+  });
+};
+
+/* ===== ГРУППА ===== */
+$("createGroup").onclick = function(){
+  var title = $("groupTitle").value.trim();
+  var usersStr = $("groupUsers").value.trim();
+  if (!title){ toast("Введи название"); return; }
+  createMultiUserChat("group", title, usersStr);
+};
+
+/* ===== КАНАЛ ===== */
+$("createChannel").onclick = function(){
+  var title = $("channelTitle").value.trim();
+  var usersStr = $("channelUsers").value.trim();
+  if (!title){ toast("Введи название"); return; }
+  createMultiUserChat("channel", title, usersStr);
+};
+
+function createMultiUserChat(type, title, usersStr){
+  var names = usersStr.split(",").map(function(s){ return s.trim().toLowerCase().replace(/^@/, ""); })
+    .filter(function(s){ return s.length > 0; });
+
+  // ищем uid по username
+  var uids = [me.uid];
+  var titles = {};
+  titles[me.uid] = profile.nickname || profile.username;
+
+  var chain = Promise.resolve();
+  names.forEach(function(un){
+    chain = chain.then(function(){
+      if (!validUsername(un)) return null;
+      return db.collection("usernames").doc(un).get().then(function(doc){
+        if (!doc.exists) return null;
+        var uid = doc.data().uid;
+        if (uids.indexOf(uid) >= 0) return null;
+        return db.collection("users").doc(uid).get().then(function(u){
+          var d = u.data() || {};
+          titles[uid] = d.nickname || d.username || un;
+          uids.push(uid);
+        });
+      });
+    });
+  });
+
+  chain.then(function(){
+    var now = firebase.firestore.FieldValue.serverTimestamp();
+    return db.collection("chats").add({
+      type: type,
+      title: title,
+      participants: uids,
+      admins: [me.uid],
+      titles: titles,
+      lastMessage: "",
+      lastMessageType: "text",
+      lastTime: now,
+      createdAt: now
+    });
+  }).then(function(ref){
+    $("newChatModal").classList.remove("show");
+    openChat(ref.id);
+  }).catch(function(e){ toast(e.message); });
+}
+
+/* ===== ПРОФИЛЬ ===== */
+$("btnProfile").onclick = function(){
+  pendingAvatar2 = null;
+  if (profile.avatar) $("avatarPreview2").innerHTML = '<img src="' + profile.avatar + '">';
+  else $("avatarPreview2").textContent = "👤";
+  $("profNick").value = profile.nickname || "";
+  $("profUsername").value = profile.username || "";
+  $("profileModal").classList.add("show");
+};
+$("closeProfile").onclick = function(){
+  $("profileModal").classList.remove("show");
+};
+
+$("saveProfile").onclick = function(){
+  var nick = $("profNick").value.trim();
+  var uname = $("profUsername").value.trim().toLowerCase().replace(/^@/, "");
+  if (!nick){ toast("Введи имя"); return; }
+  if (!validUsername(uname)){ toast("username: 3-20 символов a-z 0-9 _"); return; }
+
+  var oldUname = profile.username;
+  var doSave = function(avatarUrl){
+    var chain = Promise.resolve();
+    // если username изменился — освобождаем старый
+    if (uname !== oldUname){
+      chain = chain
+        .then(function(){
+          return db.collection("usernames").doc(uname).get().then(function(doc){
+            if (doc.exists && doc.data().uid !== me.uid){
+              throw new Error("@" + uname + " уже занят");
+            }
+          });
+        })
+        .then(function(){
+          return db.collection("usernames").doc(uname).set({
+            uid: me.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(function(){
+          return db.collection("usernames").doc(oldUname).delete();
+        });
+    }
+    chain = chain.then(function(){
+      var upd = { nickname: nick, username: uname };
+      if (avatarUrl !== null) upd.avatar = avatarUrl;
+      return db.collection("users").doc(me.uid).update(upd);
+    }).then(function(){
+      profile.nickname = nick;
+      profile.username = uname;
+      if (avatarUrl !== null) profile.avatar = avatarUrl;
+      renderMe();
+      $("profileModal").classList.remove("show");
+      toast("✅ Сохранено");
+    }).catch(function(e){ toast("❌ " + e.message); });
+    return chain;
+  };
+
+  if (pendingAvatar2){
+    toast("📤 Загрузка фото...");
+    uploadImgBB(pendingAvatar2).then(function(url){
+      doSave(url);
+    }).catch(function(e){ toast("❌ фото: " + e.message); });
+  } else {
+    doSave(null);
+  }
+};
+
+$("logoutBtn").onclick = function(){
+  if (chatsUnsub) chatsUnsub();
+  if (msgUnsub) msgUnsub();
+  auth.signOut();
+};
+
+/* ===== СТАРТ ===== */
+$("app").classList.add("hidden");
+</script>
+</body>
+</html>
