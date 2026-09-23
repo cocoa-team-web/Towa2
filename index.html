@@ -1458,6 +1458,7 @@ function renderShop(){
         '<div style="font-size:30px;width:36px;text-align:center">'+esc(d.emoji||"🎁")+'</div>'+
         '<div style="flex:1"><div style="font-weight:700">'+esc(d.name||"Подарок")+'</div><div style="color:#fbbf24;font-size:12px">🔥 '+Number(d.price||0)+'</div></div>'+
         '<button class="btn-primary gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 12px">Подарить</button>'+
+        '<button class="btn-alt gift-self" data-id="'+esc(d.id)+'" style="padding:9px 12px">Купить себе</button>'+
         (isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(d.id)+'" style="padding:9px 10px">🗑</button>':"")+
       '</div>';
     });
@@ -1469,6 +1470,27 @@ function renderShop(){
         $("giftSendInfo").innerHTML='<img src="'+esc(selectedGift.photoUrl||"")+'" style="width:72px;height:72px;object-fit:cover;border-radius:14px;display:block;margin-bottom:8px" onerror="this.style.display=\'none\'">'+esc(selectedGift.emoji||"🎁")+' <b>'+esc(selectedGift.name||"Подарок")+'</b> · 🔥 '+Number(selectedGift.price||0);
         $("giftRecipient").value="";$("giftSendModal").classList.add("show");
       }).catch(function(e){toast("❌ "+e.message,"error");});
+    };});
+    list.querySelectorAll(".gift-self").forEach(function(b){b.onclick=function(){
+      var id=this.dataset.id;
+      var purchasedPrice=0;
+      db.collection("shop").doc(id).get().then(function(d){
+        if(!d.exists)throw new Error("Подарок не найден");
+        var gift=Object.assign({id:d.id},d.data());
+        var price=Number(gift.price||0);
+        purchasedPrice=price;
+        if(price<1)throw new Error("Неверная цена");
+        var senderRef=db.collection("users").doc(me.uid);
+        var giftRef=senderRef.collection("gifts").doc();
+        var sentRef=senderRef.collection("sentGifts").doc(giftRef.id);
+        return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){
+          var bal=Number(sender.data().fire||0);
+          if(bal<price)throw new Error("Недостаточно 🔥");
+          tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});
+          tx.set(giftRef,{giftId:gift.id,name:gift.name||"Подарок",emoji:gift.emoji||"🎁",photoUrl:gift.photoUrl||"",price:price,fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",toUid:me.uid,toUsername:profile.username,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+          tx.set(sentRef,{giftId:gift.id,name:gift.name||"Подарок",emoji:gift.emoji||"🎁",photoUrl:gift.photoUrl||"",price:price,toUid:me.uid,toUsername:profile.username,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        });});
+      }).then(function(){profile.fire=Math.max(0,(profile.fire||0)-purchasedPrice);renderMe();loadMyFire();toast("🎁 Подарок куплен себе","success");}).catch(function(e){toast("❌ "+e.message,"error");});
     };});
     list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
   },function(e){
