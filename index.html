@@ -1,3 +1,4 @@
+<!-- Towa v8.0 — corrected build -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -122,6 +123,28 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
   #app.chatOpen #main{display:flex}
   #backBtn{display:flex!important}
 }
+</style>
+
+<style id="telegram-theme">
+:root{--tg-bg:#0e1621;--tg-panel:#17212b;--tg-panel2:#202b36;--tg-accent:#2aabee;--tg-text:#f5f7fa;--tg-muted:#8696a8;--tg-hover:#202b36;--tg-border:#263746}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--tg-bg);color:var(--tg-text)}
+#app{background:var(--tg-bg)!important}
+#sidebar{background:var(--tg-panel)!important;border-right:1px solid var(--tg-border)!important}
+.chat-item{border-radius:10px!important;margin:2px 7px!important;padding:9px 10px!important}
+.chat-item:hover,.chat-item.active{background:var(--tg-hover)!important}
+.chat-title{font-size:15px!important;font-weight:500!important}
+.chat-last,.chat-time{color:var(--tg-muted)!important}
+.chat-avatar,.avatar{background:#2aabee!important;color:#fff!important}
+#chatHeader{background:var(--tg-panel)!important;border-bottom:1px solid var(--tg-border)!important}
+#messages{background:var(--tg-bg)!important}
+.message{max-width:min(680px,78%)!important}
+.message-bubble{border-radius:12px!important}
+#messageInput,#searchInput{background:var(--tg-panel2)!important;border:1px solid var(--tg-border)!important;border-radius:22px!important}
+button.btn-primary,.btn-primary{background:var(--tg-accent)!important;color:#fff!important}
+.modal,.modal-content,#shopModal>div{background:var(--tg-panel)!important;border-color:var(--tg-border)!important}
+input,textarea{color:var(--tg-text)!important}
+::-webkit-scrollbar-thumb{background:#40515f}
+@media(max-width:800px){#sidebar{width:100%!important}#chatPane{position:absolute!important;inset:0!important;background:var(--tg-bg)!important}body.mobile-chat-open #sidebar{display:none!important}body.mobile-chat-open #chatPane{display:flex!important}}
 </style>
 </head><body>
 
@@ -258,10 +281,30 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 </div>
 
 <div class="modal" id="shopModal">
-  <div class="modal-box" style="max-width:500px">
-    <h3>🛍 Магазин</h3>
+  <div class="modal-box" style="max-width:520px">
+    <h3>🛍 Магазин подарков</h3>
+    <div style="font-size:12px;color:#8a93a6;margin:6px 0 12px">Баланс 🔥: <b id="shopFireBalance">0</b></div>
+    <div id="shopAdmin" class="hidden" style="border:1px solid #2a303c;border-radius:12px;padding:12px;margin-bottom:12px">
+      <div style="font-weight:700;margin-bottom:8px">👑 Создать подарок</div>
+      <input id="giftName" placeholder="Название подарка" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
+      <input id="giftEmoji" placeholder="Эмодзи, например 🎁" maxlength="4" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
+      <input id="giftPrice" type="number" min="1" step="1" placeholder="Цена в 🔥" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
+      <button id="createGiftBtn" class="btn-primary wide">Добавить в магазин</button>
+    </div>
     <div id="shopList"></div>
     <button id="shopClose" class="btn-alt wide">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="giftSendModal">
+  <div class="modal-box" style="max-width:420px">
+    <h3>🎁 Подарить</h3>
+    <div id="giftSendInfo" style="margin:10px 0;color:#cbd5e1"></div>
+    <input id="giftRecipient" placeholder="@username получателя" style="width:100%;padding:12px;border:1px solid #2a303c;border-radius:10px;margin:8px 0">
+    <div class="modal-actions">
+      <button id="sendGiftBtn" class="btn-primary">Подарить</button>
+      <button id="giftSendClose" class="btn-alt">Отмена</button>
+    </div>
   </div>
 </div>
 
@@ -643,8 +686,12 @@ auth.onAuthStateChanged(function(user){
       showAuthError("❌ " + e.message);
     });
 });
+var onlineInterval = null;
+var quotaCheckInFlight = false;
+var lastQuotaCheckAt = 0;
 
 function markOnline(){
+    if (onlineInterval) clearInterval(onlineInterval);
   if (!me) return;
   db.collection("users").doc(me.uid).update({
     online: true,
@@ -1260,11 +1307,49 @@ on("logoutBtn", "click", function(){
   auth.signOut();
 });
 
-/* Магазин — заглушка */
-on("shopBtn", "click", function(){ $("shopModal").classList.add("show"); });
-on("shopClose", "click", function(){ $("shopModal").classList.remove("show"); });
-
-function subscribeIncomingGifts(){ /* заглушка */ }
+/* Магазин подарков */
+var shopUnsub = null;
+var selectedGift = null;
+var ADMIN_EMAIL = "flowersonickmer87@gmail.com";
+function isOwner(){ return !!(me && me.email && me.email.toLowerCase() === ADMIN_EMAIL); }
+function subscribeIncomingGifts(){
+  if (!me) return;
+  if (incomingGiftsUnsub) { try{ incomingGiftsUnsub(); }catch(e){} }
+  incomingGiftsUnsub = db.collection("users").doc(me.uid).collection("gifts").orderBy("createdAt","desc").limit(20)
+    .onSnapshot(function(snap){ window.towaIncomingGifts=[]; snap.forEach(function(doc){var d=doc.data();d.id=doc.id;window.towaIncomingGifts.push(d);}); }, function(e){console.warn("gifts:",e);});
+}
+function renderShop(){
+  var list=$("shopList"); if(!list) return;
+  if(profile) $("shopFireBalance").textContent=profile.fire||0;
+  $("shopAdmin").classList.toggle("hidden",!isOwner());
+  if(shopUnsub){try{shopUnsub();}catch(e){}}
+  shopUnsub=db.collection("shop").where("active","==",true).orderBy("price","asc").onSnapshot(function(snap){
+    if(snap.empty){list.innerHTML='<div style="padding:20px;text-align:center;color:#6b7280">Подарков пока нет.</div>';return;}
+    var h="";
+    snap.forEach(function(doc){var d=doc.data();h+='<div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #2a303c;border-radius:12px;margin-bottom:8px"><div style="font-size:32px;width:44px;text-align:center">'+esc(d.emoji||"🎁")+'</div><div style="flex:1"><div style="font-weight:700">'+esc(d.name||"Подарок")+'</div><div style="color:#fbbf24;font-size:12px">🔥 '+Number(d.price||0)+'</div></div><button class="btn-primary gift-buy" data-id="'+esc(doc.id)+'" style="padding:9px 12px">Подарить</button>'+(isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(doc.id)+'" style="padding:9px 10px">🗑</button>':"")+"</div>";});
+    list.innerHTML=h;
+    list.querySelectorAll(".gift-buy").forEach(function(b){b.onclick=function(){db.collection("shop").doc(this.dataset.id).get().then(function(d){if(!d.exists)throw new Error("Подарок не найден");selectedGift=Object.assign({id:d.id},d.data());$("giftSendInfo").innerHTML=esc(selectedGift.emoji||"🎁")+" <b>"+esc(selectedGift.name||"Подарок")+"</b> · 🔥 "+Number(selectedGift.price||0);$("giftRecipient").value="";$("giftSendModal").classList.add("show");}).catch(function(e){toast("❌ "+e.message,"error");});};});
+    list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
+  },function(e){console.error("shop:",e);list.innerHTML='<div style="padding:20px;color:#f87171">Не удалось загрузить магазин.</div>';});
+}
+on("shopBtn","click",function(){$("shopModal").classList.add("show");renderShop();});
+on("shopClose","click",function(){$("shopModal").classList.remove("show");if(shopUnsub){try{shopUnsub();}catch(e){}shopUnsub=null;}});
+on("giftSendClose","click",function(){$("giftSendModal").classList.remove("show");selectedGift=null;});
+on("createGiftBtn","click",function(){
+  if(!isOwner()){toast("Нет доступа","error");return;}
+  var name=$("giftName").value.trim(),emoji=$("giftEmoji").value.trim()||"🎁",price=parseInt($("giftPrice").value,10);
+  if(!name){toast("Введи название","error");return;} if(!Number.isFinite(price)||price<1){toast("Цена должна быть от 1 🔥","error");return;}
+  db.collection("shop").add({name:name,emoji:emoji,price:price,active:true,createdBy:me.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){$("giftName").value="";$("giftEmoji").value="";$("giftPrice").value="";toast("🎁 Подарок добавлен","success");}).catch(function(e){toast("❌ "+e.message,"error");});
+});
+on("sendGiftBtn","click",function(){
+  if(!me||!selectedGift)return;
+  var uname=$("giftRecipient").value.trim().toLowerCase().replace(/^@/,"");
+  if(!validUsername(uname)){toast("Неверный @username","error");return;} if(uname===profile.username){toast("Нельзя подарить самому себе","error");return;}
+  var price=Number(selectedGift.price||0); if(price<1){toast("Неверная цена","error");return;}
+  var senderRef=db.collection("users").doc(me.uid);
+  db.collection("usernames").doc(uname).get().then(function(u){if(!u.exists)throw new Error("Пользователь @"+uname+" не найден");var rid=u.data().uid,r=db.collection("users").doc(rid),giftRef=r.collection("gifts").doc(),sentRef=senderRef.collection("sentGifts").doc(giftRef.id);return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){var bal=Number(sender.data().fire||0);if(bal<price)throw new Error("Недостаточно 🔥");tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});tx.set(giftRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",price:price,fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.set(sentRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",price:price,toUid:rid,toUsername:uname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});});});
+  }).then(function(){profile.fire=Math.max(0,(profile.fire||0)-price);renderMe();loadMyFire();$("giftSendModal").classList.remove("show");selectedGift=null;toast("🎁 Подарок отправлен","success");}).catch(function(e){toast("❌ "+e.message,"error");});
+});
 
 $("app").classList.add("hidden");
 console.log("Towa v8.0 loaded ✓");
