@@ -111,7 +111,7 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 .tabs{display:flex;gap:4px;margin-bottom:14px;background:#0a0c10;padding:4px;border-radius:10px}
 .tabs button{flex:1;background:transparent;border:0;color:#8a93a6;padding:9px;border-radius:8px;font-size:12px;font-weight:600}
 .tabs button.active{background:#00d2ff;color:#000}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#161a22;color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;z-index:999;display:none;font-size:13px;max-width:90%;border:1px solid #2a303c;text-align:center}
+.admin-stat{padding:12px;border:1px solid #2a303c;border-radius:12px;background:#0a0c10;text-align:center}.admin-stat b{display:block;font-size:20px;margin-top:3px}.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#161a22;color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;z-index:999;display:none;font-size:13px;max-width:90%;border:1px solid #2a303c;text-align:center}
 .toast.show{display:block}
 .toast.error{border-color:#f87171;color:#f87171}
 .toast.success{border-color:#4ade80;color:#4ade80}
@@ -187,6 +187,7 @@ input,textarea{color:var(--tg-text)!important}
       <h2>💬 Towa</h2>
       <button id="shopBtn">🛍</button>
       <button id="btnNew">+ Чат</button>
+      <button id="adminBtn" class="hidden" title="Админ-панель">👑</button>
       <button id="btnProfile">👤</button>
     </div>
 
@@ -280,6 +281,37 @@ input,textarea{color:var(--tg-text)!important}
   </div>
 </div>
 
+<div class="modal" id="adminModal">
+  <div class="modal-box" style="max-width:620px">
+    <h3>👑 Админ-панель Towa</h3>
+    <div class="tabs" id="adminTabs">
+      <button data-admin-tab="overview" class="active">📊 Обзор</button>
+      <button data-admin-tab="currency">🔥 Валюта</button>
+      <button data-admin-tab="shop">🛍 Магазин</button>
+    </div>
+    <div id="adminOverviewTab">
+      <div id="adminStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+      <div style="margin-top:12px;padding:12px;border:1px solid #2a303c;border-radius:12px">
+        <div style="font-weight:700;margin-bottom:6px">⚡ Быстрые действия</div>
+        <div style="font-size:12px;color:#8a93a6">Управление пользователями, 🔥 и подарками находится во вкладках выше.</div>
+      </div>
+    </div>
+    <div id="adminCurrencyTab" class="hidden">
+      <label>Поиск пользователя по @username</label>
+      <div style="display:flex;gap:8px">
+        <input id="adminUserSearch" placeholder="@username">
+        <button id="adminUserFind" class="btn-primary" style="width:auto;padding:10px 14px">Найти</button>
+      </div>
+      <div id="adminUserCard" class="hidden" style="margin-top:12px;padding:14px;border:1px solid #2a303c;border-radius:12px"></div>
+    </div>
+    <div id="adminShopTab" class="hidden">
+      <div style="font-weight:700;margin-bottom:8px">🎁 Управление подарками</div>
+      <div id="adminShopList"></div>
+    </div>
+    <button id="adminClose" class="btn-alt wide">Закрыть</button>
+  </div>
+</div>
+
 <div class="modal" id="shopModal">
   <div class="modal-box" style="max-width:520px">
     <h3>🛍 Магазин подарков</h3>
@@ -289,7 +321,15 @@ input,textarea{color:var(--tg-text)!important}
       <input id="giftName" placeholder="Название подарка" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
       <input id="giftEmoji" placeholder="Эмодзи, например 🎁" maxlength="4" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
       <input id="giftPrice" type="number" min="1" step="1" placeholder="Цена в 🔥" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
+      <input id="giftPhoto" type="file" accept="image/*" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px;box-sizing:border-box">
+      <div id="giftPhotoStatus" style="font-size:12px;color:#8a93a6;margin-bottom:8px">📷 Фото обязательно</div>
       <button id="createGiftBtn" class="btn-primary wide">Добавить в магазин</button>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #2a303c">
+        <div style="font-weight:700;margin-bottom:8px">🔥 Начислить валюту себе</div>
+        <input id="adminFireAmount" type="number" min="1" step="1" placeholder="Сколько 🔥 начислить" style="width:100%;padding:10px;border:1px solid #2a303c;border-radius:8px;margin-bottom:8px">
+        <button id="adminFireBtn" class="btn-primary wide">Начислить мне</button>
+      </div>
     </div>
     <div id="shopList"></div>
     <button id="shopClose" class="btn-alt wide">Закрыть</button>
@@ -713,6 +753,8 @@ function renderMe(){
   if (av) av.innerHTML = profile.avatar ? '<img src="' + profile.avatar + '">' : "👤";
   var f = $("meFireCount");
   if (f) f.textContent = profile.fire || 0;
+  var ab = $("adminBtn");
+  if (ab) ab.classList.toggle("hidden", !isOwner());
 }
 
 function loadMyFire(){
@@ -1307,6 +1349,86 @@ on("logoutBtn", "click", function(){
   auth.signOut();
 });
 
+/* Нормальная админ-панель */
+function openAdminPanel(){
+  if(!isOwner()){toast("Нет доступа","error");return;}
+  $("adminModal").classList.add("show");
+  renderAdminOverview();
+  renderAdminShop();
+}
+function closeAdminPanel(){ $("adminModal").classList.remove("show"); }
+function setAdminTab(tab){
+  ["overview","currency","shop"].forEach(function(x){
+    $("admin"+(x.charAt(0).toUpperCase()+x.slice(1))+"Tab").classList.toggle("hidden",x!==tab);
+  });
+  document.querySelectorAll("#adminTabs button").forEach(function(b){b.classList.toggle("active",b.dataset.adminTab===tab);});
+  if(tab==="overview") renderAdminOverview();
+  if(tab==="shop") renderAdminShop();
+}
+function renderAdminOverview(){
+  if(!isOwner()) return;
+  var box=$("adminStats"); if(!box)return;
+  box.innerHTML='<div class="admin-stat">🔥<b id="adminMyFire">'+Number(profile&&profile.fire||0)+'</b><span style="font-size:11px;color:#8a93a6">мои 🔥</span></div>'+
+    '<div class="admin-stat">🛍<b id="adminShopCount">…</b><span style="font-size:11px;color:#8a93a6">подарков</span></div>'+
+    '<div class="admin-stat">👤<b id="adminUserCount">…</b><span style="font-size:11px;color:#8a93a6">пользователей</span></div>';
+  db.collection("shop").where("active","==",true).get().then(function(s){if($("adminShopCount"))$("adminShopCount").textContent=s.size;}).catch(function(){});
+  db.collection("users").limit(500).get().then(function(s){if($("adminUserCount"))$("adminUserCount").textContent=s.size+(s.size===500?"+":"");}).catch(function(){});
+}
+function renderAdminShop(){
+  if(!isOwner())return;
+  var box=$("adminShopList");if(!box)return;
+  box.innerHTML='<div style="color:#8a93a6;font-size:12px;padding:12px;text-align:center">Загрузка…</div>';
+  db.collection("shop").get().then(function(snap){
+    var items=[];snap.forEach(function(d){var x=d.data();x.id=d.id;items.push(x);});
+    items.sort(function(a,b){return Number(a.price||0)-Number(b.price||0);});
+    if(!items.length){box.innerHTML='<div style="padding:16px;text-align:center;color:#6b7280">Подарков нет.</div>';return;}
+    var h="";
+    items.forEach(function(d){
+      var active=d.active!==false;
+      h+='<div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #2a303c;border-radius:12px;margin-bottom:8px">'+
+        '<img src="'+esc(d.photoUrl||"")+'" style="width:46px;height:46px;object-fit:cover;border-radius:10px;background:#111827" onerror="this.style.display=\'none\'">'+
+        '<div style="flex:1"><b>'+esc(d.name||"Подарок")+'</b><div style="font-size:12px;color:#fbbf24">🔥 '+Number(d.price||0)+' · '+(active?'🟢 активен':'⚪ скрыт')+'</div></div>'+
+        '<button class="btn-alt admin-toggle-gift" data-id="'+esc(d.id)+'" style="padding:8px">'+(active?'Скрыть':'Включить')+'</button>'+
+        '<button class="btn-alt admin-delete-gift" data-id="'+esc(d.id)+'" style="padding:8px">🗑</button>'+
+      '</div>';
+    });
+    box.innerHTML=h;
+    box.querySelectorAll(".admin-toggle-gift").forEach(function(b){b.onclick=function(){var id=this.dataset.id;db.collection("shop").doc(id).get().then(function(d){return db.collection("shop").doc(id).update({active:d.data().active===false});}).then(function(){renderAdminShop();renderShop();toast("Магазин обновлён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
+    box.querySelectorAll(".admin-delete-gift").forEach(function(b){b.onclick=function(){if(!confirm("Удалить подарок?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){renderAdminShop();renderShop();toast("🗑 Удалено","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
+  }).catch(function(e){box.innerHTML='<div style="color:#f87171">Ошибка: '+esc(e.message)+'</div>';});
+}
+function findAdminUser(){
+  if(!isOwner())return;
+  var uname=$("adminUserSearch").value.trim().toLowerCase().replace(/^@/,"");
+  if(!validUsername(uname)){toast("Неверный @username","error");return;}
+  var card=$("adminUserCard");card.classList.remove("hidden");card.innerHTML='<div style="color:#8a93a6">Загрузка…</div>';
+  db.collection("usernames").doc(uname).get().then(function(u){
+    if(!u.exists)throw new Error("Пользователь не найден");
+    var uid=u.data().uid;return db.collection("users").doc(uid).get().then(function(d){if(!d.exists)throw new Error("Профиль не найден");return {uid:uid,data:d.data()};});
+  }).then(function(x){
+    var u=x.data, fire=Number(u.fire||0);
+    card.innerHTML='<div style="display:flex;gap:10px;align-items:center">'+
+      '<div style="width:48px;height:48px;border-radius:50%;overflow:hidden;background:#0a0c10;display:flex;align-items:center;justify-content:center">'+(u.avatar?'<img src="'+esc(u.avatar)+'" style="width:100%;height:100%;object-fit:cover">':'👤')+'</div>'+
+      '<div style="flex:1"><b>'+esc(u.nickname||uname)+'</b><div style="font-size:12px;color:#8a93a6">@'+esc(u.username||uname)+' · '+esc(x.uid)+'</div></div>'+
+      '<div style="font-weight:700">🔥 '+fire+'</div></div>'+
+      '<div style="margin-top:12px;display:flex;gap:8px;align-items:center"><input id="adminAdjustAmount" type="number" min="1" step="1" placeholder="Количество 🔥" style="flex:1"><button id="adminAddFire" class="btn-primary" style="width:auto">+ Начислить</button><button id="adminRemoveFire" class="btn-alt" style="width:auto">− Списать</button></div>';
+    $("adminAddFire").onclick=function(){adminAdjustFire(x.uid,1);};
+    $("adminRemoveFire").onclick=function(){adminAdjustFire(x.uid,-1);};
+  }).catch(function(e){card.innerHTML='<div style="color:#f87171">❌ '+esc(e.message)+'</div>';});
+}
+function adminAdjustFire(uid,sign){
+  var n=parseInt($("adminAdjustAmount").value,10);
+  if(!Number.isFinite(n)||n<1){toast("Введи количество 🔥 больше 0","error");return;}
+  db.collection("users").doc(uid).update({fire:firebase.firestore.FieldValue.increment(sign*n)}).then(function(){
+    $("adminAdjustAmount").value="";findAdminUser();toast(sign>0?"🔥 Валюта начислена":"🔥 Валюта списана","success");
+  }).catch(function(e){toast("❌ "+e.message,"error");});
+}
+on("adminBtn","click",openAdminPanel);
+on("adminClose","click",closeAdminPanel);
+document.querySelectorAll("#adminTabs button").forEach(function(b){b.addEventListener("click",function(){setAdminTab(this.dataset.adminTab);});});
+on("adminUserFind","click",findAdminUser);
+on("adminUserSearch","keydown",function(e){if(e.key==="Enter")findAdminUser();});
+
 /* Магазин подарков */
 var shopUnsub = null;
 var selectedGift = null;
@@ -1323,14 +1445,36 @@ function renderShop(){
   if(profile) $("shopFireBalance").textContent=profile.fire||0;
   $("shopAdmin").classList.toggle("hidden",!isOwner());
   if(shopUnsub){try{shopUnsub();}catch(e){}}
-  shopUnsub=db.collection("shop").where("active","==",true).orderBy("price","asc").onSnapshot(function(snap){
+  // Не используем orderBy вместе с where — это убирает необходимость в составном индексе.
+  shopUnsub=db.collection("shop").where("active","==",true).onSnapshot(function(snap){
     if(snap.empty){list.innerHTML='<div style="padding:20px;text-align:center;color:#6b7280">Подарков пока нет.</div>';return;}
+    var gifts=[];
+    snap.forEach(function(doc){var d=doc.data();d.id=doc.id;gifts.push(d);});
+    gifts.sort(function(a,b){return Number(a.price||0)-Number(b.price||0);});
     var h="";
-    snap.forEach(function(doc){var d=doc.data();h+='<div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #2a303c;border-radius:12px;margin-bottom:8px"><div style="font-size:32px;width:44px;text-align:center">'+esc(d.emoji||"🎁")+'</div><div style="flex:1"><div style="font-weight:700">'+esc(d.name||"Подарок")+'</div><div style="color:#fbbf24;font-size:12px">🔥 '+Number(d.price||0)+'</div></div><button class="btn-primary gift-buy" data-id="'+esc(doc.id)+'" style="padding:9px 12px">Подарить</button>'+(isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(doc.id)+'" style="padding:9px 10px">🗑</button>':"")+"</div>";});
+    gifts.forEach(function(d){
+      h+='<div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #2a303c;border-radius:12px;margin-bottom:8px">'+
+        '<img src="'+esc(d.photoUrl||"")+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:12px;background:#111827" onerror="this.style.display=\'none\'">'+
+        '<div style="font-size:30px;width:36px;text-align:center">'+esc(d.emoji||"🎁")+'</div>'+
+        '<div style="flex:1"><div style="font-weight:700">'+esc(d.name||"Подарок")+'</div><div style="color:#fbbf24;font-size:12px">🔥 '+Number(d.price||0)+'</div></div>'+
+        '<button class="btn-primary gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 12px">Подарить</button>'+
+        (isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(d.id)+'" style="padding:9px 10px">🗑</button>':"")+
+      '</div>';
+    });
     list.innerHTML=h;
-    list.querySelectorAll(".gift-buy").forEach(function(b){b.onclick=function(){db.collection("shop").doc(this.dataset.id).get().then(function(d){if(!d.exists)throw new Error("Подарок не найден");selectedGift=Object.assign({id:d.id},d.data());$("giftSendInfo").innerHTML=esc(selectedGift.emoji||"🎁")+" <b>"+esc(selectedGift.name||"Подарок")+"</b> · 🔥 "+Number(selectedGift.price||0);$("giftRecipient").value="";$("giftSendModal").classList.add("show");}).catch(function(e){toast("❌ "+e.message,"error");});};});
+    list.querySelectorAll(".gift-buy").forEach(function(b){b.onclick=function(){
+      db.collection("shop").doc(this.dataset.id).get().then(function(d){
+        if(!d.exists)throw new Error("Подарок не найден");
+        selectedGift=Object.assign({id:d.id},d.data());
+        $("giftSendInfo").innerHTML='<img src="'+esc(selectedGift.photoUrl||"")+'" style="width:72px;height:72px;object-fit:cover;border-radius:14px;display:block;margin-bottom:8px" onerror="this.style.display=\'none\'">'+esc(selectedGift.emoji||"🎁")+' <b>'+esc(selectedGift.name||"Подарок")+'</b> · 🔥 '+Number(selectedGift.price||0);
+        $("giftRecipient").value="";$("giftSendModal").classList.add("show");
+      }).catch(function(e){toast("❌ "+e.message,"error");});
+    };});
     list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
-  },function(e){console.error("shop:",e);list.innerHTML='<div style="padding:20px;color:#f87171">Не удалось загрузить магазин.</div>';});
+  },function(e){
+    console.error("shop:",e);
+    list.innerHTML='<div style="padding:20px;color:#f87171">Не удалось загрузить магазин.<br><small>'+esc(e.code||e.message||"unknown")+'</small></div>';
+  });
 }
 on("shopBtn","click",function(){$("shopModal").classList.add("show");renderShop();});
 on("shopClose","click",function(){$("shopModal").classList.remove("show");if(shopUnsub){try{shopUnsub();}catch(e){}shopUnsub=null;}});
@@ -1338,8 +1482,32 @@ on("giftSendClose","click",function(){$("giftSendModal").classList.remove("show"
 on("createGiftBtn","click",function(){
   if(!isOwner()){toast("Нет доступа","error");return;}
   var name=$("giftName").value.trim(),emoji=$("giftEmoji").value.trim()||"🎁",price=parseInt($("giftPrice").value,10);
-  if(!name){toast("Введи название","error");return;} if(!Number.isFinite(price)||price<1){toast("Цена должна быть от 1 🔥","error");return;}
-  db.collection("shop").add({name:name,emoji:emoji,price:price,active:true,createdBy:me.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){$("giftName").value="";$("giftEmoji").value="";$("giftPrice").value="";toast("🎁 Подарок добавлен","success");}).catch(function(e){toast("❌ "+e.message,"error");});
+  var file=$("giftPhoto").files && $("giftPhoto").files[0];
+  if(!name){toast("Введи название","error");return;}
+  if(!Number.isFinite(price)||price<1){toast("Цена должна быть от 1 🔥","error");return;}
+  if(!file){toast("📷 Для подарка обязательно фото","error");return;}
+  $("createGiftBtn").disabled=true; $("giftPhotoStatus").textContent="📤 Загружаю фото...";
+  compressImage(file,900,0.82,function(base64){
+    uploadImgBB(base64).then(function(photoUrl){
+      return db.collection("shop").add({name:name,emoji:emoji,price:price,photoUrl:photoUrl,active:true,createdBy:me.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }).then(function(){
+      $("giftName").value="";$("giftEmoji").value="";$("giftPrice").value="";$("giftPhoto").value="";$("giftPhotoStatus").textContent="📷 Фото обязательно";
+      toast("🎁 Подарок добавлен","success");
+    }).catch(function(e){toast("❌ "+e.message,"error");})
+    .finally(function(){$("createGiftBtn").disabled=false;});
+  });
+});
+
+on("adminFireBtn","click",function(){
+  if(!isOwner()){toast("Нет доступа","error");return;}
+  var amount=parseInt($("adminFireAmount").value,10);
+  if(!Number.isFinite(amount)||amount<1){toast("Введи количество 🔥 больше 0","error");return;}
+  db.collection("users").doc(me.uid).update({fire:firebase.firestore.FieldValue.increment(amount)})
+    .then(function(){
+      profile.fire=Number(profile.fire||0)+amount;
+      $("adminFireAmount").value="";renderMe();loadMyFire();renderShop();
+      toast("🔥 Начислено: +"+amount,"success");
+    }).catch(function(e){toast("❌ "+e.message,"error");});
 });
 on("sendGiftBtn","click",function(){
   if(!me||!selectedGift)return;
@@ -1347,7 +1515,7 @@ on("sendGiftBtn","click",function(){
   if(!validUsername(uname)){toast("Неверный @username","error");return;} if(uname===profile.username){toast("Нельзя подарить самому себе","error");return;}
   var price=Number(selectedGift.price||0); if(price<1){toast("Неверная цена","error");return;}
   var senderRef=db.collection("users").doc(me.uid);
-  db.collection("usernames").doc(uname).get().then(function(u){if(!u.exists)throw new Error("Пользователь @"+uname+" не найден");var rid=u.data().uid,r=db.collection("users").doc(rid),giftRef=r.collection("gifts").doc(),sentRef=senderRef.collection("sentGifts").doc(giftRef.id);return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){var bal=Number(sender.data().fire||0);if(bal<price)throw new Error("Недостаточно 🔥");tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});tx.set(giftRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",price:price,fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.set(sentRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",price:price,toUid:rid,toUsername:uname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});});});
+  db.collection("usernames").doc(uname).get().then(function(u){if(!u.exists)throw new Error("Пользователь @"+uname+" не найден");var rid=u.data().uid,r=db.collection("users").doc(rid),giftRef=r.collection("gifts").doc(),sentRef=senderRef.collection("sentGifts").doc(giftRef.id);return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){var bal=Number(sender.data().fire||0);if(bal<price)throw new Error("Недостаточно 🔥");tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});tx.set(giftRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.set(sentRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,toUid:rid,toUsername:uname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});});});
   }).then(function(){profile.fire=Math.max(0,(profile.fire||0)-price);renderMe();loadMyFire();$("giftSendModal").classList.remove("show");selectedGift=null;toast("🎁 Подарок отправлен","success");}).catch(function(e){toast("❌ "+e.message,"error");});
 });
 
