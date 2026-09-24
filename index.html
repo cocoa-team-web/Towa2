@@ -628,46 +628,23 @@ on("doLogin", "click", function(){
 on("passInput", "keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("doLogin").click(); } });
 on("emailInput", "keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("passInput").focus(); } });
 </script><script>
-/* ===== ПРОВЕРКА КВОТЫ ===== */
+/* ===== ЛОКАЛЬНЫЙ ЛИМИТ (БЕЗ ЛИШНИХ ЗАПРОСОВ FIREBASE) ===== */
 function checkQuotaOnStart(){
   var btn = $("doLogin");
   var msg = $("authMsg");
   if (!btn || !msg) return;
-
   var until = 0;
-  try{ until = parseInt(localStorage.getItem(QUOTA_KEY) || "0"); }catch(e){}
-  var now = Date.now();
-
-  if (until && until > now){
-    var h = Math.floor((until - now) / 3600000);
-    var m = Math.ceil(((until - now) % 3600000) / 60000);
-    msg.textContent = "⛔ Дневной лимит заходов исчерпан.\nПопробуй через " + h + " ч " + m + " мин.";
-    msg.className = "";
+  try{ until = parseInt(localStorage.getItem(QUOTA_KEY) || "0", 10); }catch(e){}
+  if (until && until > Date.now()){
+    var left = until - Date.now();
+    var h = Math.floor(left / 3600000);
+    var m = Math.ceil((left % 3600000) / 60000);
+    msg.textContent = "⛔ Локальный лимит включён.\nПопробуй через " + h + " ч " + m + " мин.";
     btn.disabled = true;
-    btn.textContent = "Заблокировано (лимит)";
+    btn.textContent = "Заблокировано";
     btn.style.opacity = ".5";
     btn.style.cursor = "not-allowed";
-    return;
   }
-
-  // живой тест
-  var testEmail = "__quota_" + Date.now() + "@none.local";
-  auth.signInWithEmailAndPassword(testEmail, "invalid_" + Date.now())
-    .then(function(){ return auth.signOut(); })
-    .catch(function(e){
-      if (e.code === "auth/quota-exceeded"){
-        var blockUntil = Date.now() + 24 * 3600 * 1000;
-        try{ localStorage.setItem(QUOTA_KEY, String(blockUntil)); }catch(x){}
-        msg.textContent = "⛔ Дневной лимит заходов исчерпан.\nПопробуй через 24 часа.";
-        msg.className = "";
-        btn.disabled = true;
-        btn.textContent = "Заблокировано (лимит)";
-        btn.style.opacity = ".5";
-        btn.style.cursor = "not-allowed";
-      } else {
-        try{ localStorage.removeItem(QUOTA_KEY); }catch(x){}
-      }
-    });
 }
 
 on("resetQuotaBtn", "click", function(){
@@ -676,9 +653,8 @@ on("resetQuotaBtn", "click", function(){
 });
 
 window.addEventListener("DOMContentLoaded", function(){
-  setTimeout(checkQuotaOnStart, 800);
+  setTimeout(checkQuotaOnStart, 100);
 });
-setInterval(checkQuotaOnStart, 5 * 60 * 1000);
 
 /* ===== AUTH STATE ===== */
 auth.onAuthStateChanged(function(user){
@@ -1283,7 +1259,7 @@ function createMultiChat(type, title, usersStr, pubUsername, isPublic){
     if (isPublic && pubUsername){
       return db.collection("public_chats").doc(pubUsername).set({
         chatId: ref.id, title: title, username: pubUsername, type: type,
-        members: uids.length, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        members: uids.length, createdBy: me.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(function(){ return ref; });
     }
     return ref;
