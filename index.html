@@ -268,10 +268,6 @@ input,textarea{color:var(--tg-text)!important}
     <input id="profNick" placeholder="Имя">
     <label>@username</label>
     <input id="profUsername" placeholder="@username">
-    <button id="myGiftsBtn" class="btn-alt wide" type="button" style="margin-top:12px">🎁 Мои подарки</button>
-    <div id="myGiftsPanel" style="display:none;margin-top:10px;padding:10px;border:1px solid #2a303c;border-radius:12px;background:#0a0c10;max-height:280px;overflow-y:auto">
-      <div id="myGiftsList"></div>
-    </div>
     <div class="modal-actions">
       <button id="saveProfile" class="btn-primary">Сохранить</button>
       <button id="logoutBtn" class="btn-alt">Выйти</button>
@@ -290,6 +286,7 @@ input,textarea{color:var(--tg-text)!important}
     <h3>👑 Админ-панель Towa</h3>
     <div class="tabs" id="adminTabs">
       <button data-admin-tab="overview" class="active">📊 Обзор</button>
+      <button data-admin-tab="users">👥 Пользователи</button>
       <button data-admin-tab="currency">🔥 Валюта</button>
       <button data-admin-tab="shop">🛍 Магазин</button>
     </div>
@@ -300,13 +297,17 @@ input,textarea{color:var(--tg-text)!important}
         <div style="font-size:12px;color:#8a93a6">Управление пользователями, 🔥 и подарками находится во вкладках выше.</div>
       </div>
     </div>
-    <div id="adminCurrencyTab" class="hidden">
+    <div id="adminUsersTab" class="hidden">
       <label>Поиск пользователя по @username</label>
       <div style="display:flex;gap:8px">
         <input id="adminUserSearch" placeholder="@username">
         <button id="adminUserFind" class="btn-primary" style="width:auto;padding:10px 14px">Найти</button>
       </div>
       <div id="adminUserCard" class="hidden" style="margin-top:12px;padding:14px;border:1px solid #2a303c;border-radius:12px"></div>
+    </div>
+    <div id="adminCurrencyTab" class="hidden">
+      <div style="font-weight:700;margin-bottom:8px">🔥 Управление валютой</div>
+      <div style="font-size:12px;color:#8a93a6">Найди пользователя во вкладке «Пользователи», затем измени его баланс 🔥.</div>
     </div>
     <div id="adminShopTab" class="hidden">
       <div style="font-weight:700;margin-bottom:8px">🎁 Управление подарками</div>
@@ -628,23 +629,46 @@ on("doLogin", "click", function(){
 on("passInput", "keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("doLogin").click(); } });
 on("emailInput", "keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("passInput").focus(); } });
 </script><script>
-/* ===== ЛОКАЛЬНЫЙ ЛИМИТ (БЕЗ ЛИШНИХ ЗАПРОСОВ FIREBASE) ===== */
+/* ===== ПРОВЕРКА КВОТЫ ===== */
 function checkQuotaOnStart(){
   var btn = $("doLogin");
   var msg = $("authMsg");
   if (!btn || !msg) return;
+
   var until = 0;
-  try{ until = parseInt(localStorage.getItem(QUOTA_KEY) || "0", 10); }catch(e){}
-  if (until && until > Date.now()){
-    var left = until - Date.now();
-    var h = Math.floor(left / 3600000);
-    var m = Math.ceil((left % 3600000) / 60000);
-    msg.textContent = "⛔ Локальный лимит включён.\nПопробуй через " + h + " ч " + m + " мин.";
+  try{ until = parseInt(localStorage.getItem(QUOTA_KEY) || "0"); }catch(e){}
+  var now = Date.now();
+
+  if (until && until > now){
+    var h = Math.floor((until - now) / 3600000);
+    var m = Math.ceil(((until - now) % 3600000) / 60000);
+    msg.textContent = "⛔ Дневной лимит заходов исчерпан.\nПопробуй через " + h + " ч " + m + " мин.";
+    msg.className = "";
     btn.disabled = true;
-    btn.textContent = "Заблокировано";
+    btn.textContent = "Заблокировано (лимит)";
     btn.style.opacity = ".5";
     btn.style.cursor = "not-allowed";
+    return;
   }
+
+  // живой тест
+  var testEmail = "__quota_" + Date.now() + "@none.local";
+  auth.signInWithEmailAndPassword(testEmail, "invalid_" + Date.now())
+    .then(function(){ return auth.signOut(); })
+    .catch(function(e){
+      if (e.code === "auth/quota-exceeded"){
+        var blockUntil = Date.now() + 24 * 3600 * 1000;
+        try{ localStorage.setItem(QUOTA_KEY, String(blockUntil)); }catch(x){}
+        msg.textContent = "⛔ Дневной лимит заходов исчерпан.\nПопробуй через 24 часа.";
+        msg.className = "";
+        btn.disabled = true;
+        btn.textContent = "Заблокировано (лимит)";
+        btn.style.opacity = ".5";
+        btn.style.cursor = "not-allowed";
+      } else {
+        try{ localStorage.removeItem(QUOTA_KEY); }catch(x){}
+      }
+    });
 }
 
 on("resetQuotaBtn", "click", function(){
@@ -653,8 +677,9 @@ on("resetQuotaBtn", "click", function(){
 });
 
 window.addEventListener("DOMContentLoaded", function(){
-  setTimeout(checkQuotaOnStart, 100);
+  setTimeout(checkQuotaOnStart, 800);
 });
+setInterval(checkQuotaOnStart, 5 * 60 * 1000);
 
 /* ===== AUTH STATE ===== */
 auth.onAuthStateChanged(function(user){
@@ -692,6 +717,16 @@ auth.onAuthStateChanged(function(user){
     })
     .then(function(doc){
       profile = doc.data();
+      if(profile && profile.banned===true){
+        var until=profile.bannedUntil;
+        var expired=until && (until.toDate?until.toDate().getTime():new Date(until).getTime()) <= Date.now();
+        if(expired){
+          return db.collection("users").doc(user.uid).update({banned:false,banReason:"",bannedUntil:null}).then(function(){profile.banned=false;});
+        }
+        var msg="🚫 Ваш аккаунт заблокирован"+(profile.banReason?". Причина: "+profile.banReason:"")+(until?". До: "+new Date(until.toDate?until.toDate():until).toLocaleString("ru-RU"):" навсегда");
+        showAuthError(msg);
+        return auth.signOut();
+      }
       $("authScreen").classList.add("hidden");
       $("app").classList.remove("hidden");
       showAuthError("");
@@ -1085,6 +1120,7 @@ function sendText(){
 }
 
 function sendPhoto(ev){
+  if(profile && profile.banned){toast("🚫 Вы забанены и не можете отправлять сообщения","error");ev.target.value="";return;}
   var file = ev.target.files[0]; ev.target.value = "";
   if (!file || !openChatId) return;
   if (file.size > 32 * 1024 * 1024){ toast("Фото больше 32 МБ", "error"); return; }
@@ -1259,7 +1295,7 @@ function createMultiChat(type, title, usersStr, pubUsername, isPublic){
     if (isPublic && pubUsername){
       return db.collection("public_chats").doc(pubUsername).set({
         chatId: ref.id, title: title, username: pubUsername, type: type,
-        members: uids.length, createdBy: me.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        members: uids.length, createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(function(){ return ref; });
     }
     return ref;
@@ -1276,42 +1312,8 @@ on("btnProfile", "click", function(){
   else $("avatarPreview2").textContent = "👤";
   $("profNick").value = profile.nickname || "";
   $("profUsername").value = profile.username || "";
-  $("myGiftsPanel").style.display = "none";
   $("profileModal").classList.add("show");
 });
-
-function renderMyGifts(){
-  var list = $("myGiftsList");
-  if (!list) return;
-  var gifts = Array.isArray(window.towaIncomingGifts) ? window.towaIncomingGifts.slice() : [];
-  gifts.sort(function(a,b){
-    var at=a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
-    var bt=b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
-    return bt-at;
-  });
-  if (!gifts.length){
-    list.innerHTML='<div style="padding:12px;text-align:center;color:#6b7280">Подарков пока нет 🎁</div>';
-    return;
-  }
-  var h='';
-  gifts.forEach(function(g){
-    var from = g.fromNickname || (g.fromUsername ? '@'+g.fromUsername : 'неизвестно');
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:9px;border:1px solid #202633;border-radius:10px;margin-bottom:7px">'+
-      (g.photoUrl ? '<img src="'+esc(g.photoUrl)+'" style="width:48px;height:48px;object-fit:cover;border-radius:10px" onerror="this.style.display=&#39;none&#39;">' : '<div style="font-size:30px;width:48px;text-align:center">'+esc(g.emoji||'🎁')+'</div>')+
-      '<div style="flex:1;min-width:0"><div style="font-weight:700">'+esc(g.name||'Подарок')+'</div><div style="font-size:11px;color:#9ca3af">От: '+esc(from)+'</div></div>'+
-      '<div style="font-size:12px;color:#fbbf24;white-space:nowrap">🔥 '+Number(g.price||0)+'</div>'+
-      '</div>';
-  });
-  list.innerHTML=h;
-}
-
-on("myGiftsBtn", "click", function(){
-  var panel=$("myGiftsPanel");
-  var open=panel.style.display!=="none";
-  panel.style.display=open?"none":"block";
-  if(!open) renderMyGifts();
-});
-
 on("closeProfile", "click", function(){ $("profileModal").classList.remove("show"); });
 
 on("saveProfile", "click", function(){
@@ -1372,12 +1374,34 @@ function openAdminPanel(){
 }
 function closeAdminPanel(){ $("adminModal").classList.remove("show"); }
 function setAdminTab(tab){
-  ["overview","currency","shop"].forEach(function(x){
+  ["overview","users","currency","shop"].forEach(function(x){
     $("admin"+(x.charAt(0).toUpperCase()+x.slice(1))+"Tab").classList.toggle("hidden",x!==tab);
   });
   document.querySelectorAll("#adminTabs button").forEach(function(b){b.classList.toggle("active",b.dataset.adminTab===tab);});
   if(tab==="overview") renderAdminOverview();
+  if(tab==="users") renderAdminUsers();
   if(tab==="shop") renderAdminShop();
+}
+function renderAdminUsers(){
+  if(!isOwner()) return;
+}
+function adminBanUser(uid){
+  if(!isOwner() || uid===me.uid){toast("Нельзя забанить владельца","error");return;}
+  var duration=Number(($("adminBanDuration")||{}).value||0);
+  var reason=(($("adminBanReason")||{}).value||"").trim();
+  var until=duration>0 ? firebase.firestore.Timestamp.fromMillis(Date.now()+duration*3600000) : null;
+  db.collection("users").doc(uid).update({
+    banned:true, banReason:reason||"Нарушение правил", bannedUntil:until,
+    bannedAt:firebase.firestore.FieldValue.serverTimestamp(), bannedBy:me.uid
+  }).then(function(){toast(until?"🚫 Пользователь забанен временно":"🚫 Пользователь забанен навсегда","success");findAdminUser();})
+    .catch(function(e){toast("❌ "+e.message,"error");});
+}
+function adminUnbanUser(uid){
+  if(!isOwner())return;
+  db.collection("users").doc(uid).update({
+    banned:false, banReason:"", bannedUntil:null, bannedAt:null, bannedBy:""
+  }).then(function(){toast("🔓 Пользователь разбанен","success");findAdminUser();})
+    .catch(function(e){toast("❌ "+e.message,"error");});
 }
 function renderAdminOverview(){
   if(!isOwner()) return;
@@ -1420,14 +1444,18 @@ function findAdminUser(){
     if(!u.exists)throw new Error("Пользователь не найден");
     var uid=u.data().uid;return db.collection("users").doc(uid).get().then(function(d){if(!d.exists)throw new Error("Профиль не найден");return {uid:uid,data:d.data()};});
   }).then(function(x){
-    var u=x.data, fire=Number(u.fire||0);
+    var u=x.data, fire=Number(u.fire||0), banned=u.banned===true;
+    var banText=banned ? (u.bannedUntil ? "🚫 Забанен до "+new Date(u.bannedUntil.toDate?u.bannedUntil.toDate():u.bannedUntil).toLocaleString("ru-RU") : "🚫 Забанен навсегда") : "🟢 Не забанен";
     card.innerHTML='<div style="display:flex;gap:10px;align-items:center">'+
       '<div style="width:48px;height:48px;border-radius:50%;overflow:hidden;background:#0a0c10;display:flex;align-items:center;justify-content:center">'+(u.avatar?'<img src="'+esc(u.avatar)+'" style="width:100%;height:100%;object-fit:cover">':'👤')+'</div>'+
-      '<div style="flex:1"><b>'+esc(u.nickname||uname)+'</b><div style="font-size:12px;color:#8a93a6">@'+esc(u.username||uname)+' · '+esc(x.uid)+'</div></div>'+
+      '<div style="flex:1"><b>'+esc(u.nickname||uname)+'</b><div style="font-size:12px;color:#8a93a6">@'+esc(u.username||uname)+' · '+esc(x.uid)+'</div><div style="font-size:12px;margin-top:3px;color:'+(banned?'#f87171':'#4ade80')+'">'+banText+(u.banReason?' · '+esc(u.banReason):'')+'</div></div>'+
       '<div style="font-weight:700">🔥 '+fire+'</div></div>'+
-      '<div style="margin-top:12px;display:flex;gap:8px;align-items:center"><input id="adminAdjustAmount" type="number" min="1" step="1" placeholder="Количество 🔥" style="flex:1"><button id="adminAddFire" class="btn-primary" style="width:auto">+ Начислить</button><button id="adminRemoveFire" class="btn-alt" style="width:auto">− Списать</button></div>';
+      '<div style="margin-top:12px;display:flex;gap:8px;align-items:center"><input id="adminAdjustAmount" type="number" min="1" step="1" placeholder="Количество 🔥" style="flex:1"><button id="adminAddFire" class="btn-primary" style="width:auto">+ Начислить</button><button id="adminRemoveFire" class="btn-alt" style="width:auto">− Списать</button></div>'+
+      '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2a303c"><b>🚫 Модерация</b><div style="display:flex;gap:8px;margin-top:8px"><select id="adminBanDuration" style="flex:1;padding:10px;border:1px solid #2a303c;border-radius:8px;background:#0a0c10;color:#fff"><option value="0">Навсегда</option><option value="1">1 час</option><option value="24">1 день</option><option value="72">3 дня</option><option value="168">7 дней</option><option value="720">30 дней</option></select><input id="adminBanReason" placeholder="Причина" style="flex:1;padding:10px;border:1px solid #2a303c;border-radius:8px;background:#0a0c10;color:#fff"></div><div style="display:flex;gap:8px;margin-top:8px"><button id="adminBanBtn" class="btn-alt" style="flex:1">🚫 Забанить</button><button id="adminUnbanBtn" class="btn-alt" style="flex:1">🔓 Разбанить</button></div></div>';
     $("adminAddFire").onclick=function(){adminAdjustFire(x.uid,1);};
     $("adminRemoveFire").onclick=function(){adminAdjustFire(x.uid,-1);};
+    $("adminBanBtn").onclick=function(){adminBanUser(x.uid);};
+    $("adminUnbanBtn").onclick=function(){adminUnbanUser(x.uid);};
   }).catch(function(e){card.innerHTML='<div style="color:#f87171">❌ '+esc(e.message)+'</div>';});
 }
 function adminAdjustFire(uid,sign){
@@ -1472,7 +1500,6 @@ function renderShop(){
         '<div style="font-size:30px;width:36px;text-align:center">'+esc(d.emoji||"🎁")+'</div>'+
         '<div style="flex:1"><div style="font-weight:700">'+esc(d.name||"Подарок")+'</div><div style="color:#fbbf24;font-size:12px">🔥 '+Number(d.price||0)+'</div></div>'+
         '<button class="btn-primary gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 12px">Подарить</button>'+
-        '<button class="btn-alt gift-self" data-id="'+esc(d.id)+'" style="padding:9px 12px">Купить себе</button>'+
         (isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(d.id)+'" style="padding:9px 10px">🗑</button>':"")+
       '</div>';
     });
@@ -1484,27 +1511,6 @@ function renderShop(){
         $("giftSendInfo").innerHTML='<img src="'+esc(selectedGift.photoUrl||"")+'" style="width:72px;height:72px;object-fit:cover;border-radius:14px;display:block;margin-bottom:8px" onerror="this.style.display=\'none\'">'+esc(selectedGift.emoji||"🎁")+' <b>'+esc(selectedGift.name||"Подарок")+'</b> · 🔥 '+Number(selectedGift.price||0);
         $("giftRecipient").value="";$("giftSendModal").classList.add("show");
       }).catch(function(e){toast("❌ "+e.message,"error");});
-    };});
-    list.querySelectorAll(".gift-self").forEach(function(b){b.onclick=function(){
-      var id=this.dataset.id;
-      var purchasedPrice=0;
-      db.collection("shop").doc(id).get().then(function(d){
-        if(!d.exists)throw new Error("Подарок не найден");
-        var gift=Object.assign({id:d.id},d.data());
-        var price=Number(gift.price||0);
-        purchasedPrice=price;
-        if(price<1)throw new Error("Неверная цена");
-        var senderRef=db.collection("users").doc(me.uid);
-        var giftRef=senderRef.collection("gifts").doc();
-        var sentRef=senderRef.collection("sentGifts").doc(giftRef.id);
-        return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){
-          var bal=Number(sender.data().fire||0);
-          if(bal<price)throw new Error("Недостаточно 🔥");
-          tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});
-          tx.set(giftRef,{giftId:gift.id,name:gift.name||"Подарок",emoji:gift.emoji||"🎁",photoUrl:gift.photoUrl||"",price:price,fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",toUid:me.uid,toUsername:profile.username,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-          tx.set(sentRef,{giftId:gift.id,name:gift.name||"Подарок",emoji:gift.emoji||"🎁",photoUrl:gift.photoUrl||"",price:price,toUid:me.uid,toUsername:profile.username,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-        });});
-      }).then(function(){profile.fire=Math.max(0,(profile.fire||0)-purchasedPrice);renderMe();loadMyFire();toast("🎁 Подарок куплен себе","success");}).catch(function(e){toast("❌ "+e.message,"error");});
     };});
     list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
   },function(e){
