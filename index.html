@@ -845,6 +845,7 @@ auth.onAuthStateChanged(function(user){
       try{ markOnline(); }catch(e){}
       try{ loadMyFire(); }catch(e){}
       try{ subscribeIncomingGifts(); }catch(e){}
+      try{ recordLoginHistory(); }catch(e){ console.warn('loginHistory init:', e); }
     })
     .catch(function(e){
       console.error("PROFILE:", e);
@@ -1861,8 +1862,21 @@ console.log("Towa v8.0 loaded ✓");
   function openHistory(){if(!me)return;$('historyModal').classList.add('show');var box=$('historyList');box.innerHTML='<div style="padding:20px;text-align:center">Загрузка...</div>';db.collection('users').doc(me.uid).collection('history').orderBy('createdAt','desc').limit(100).get().then(function(s){if(s.empty){box.innerHTML='<div style="padding:20px;color:#6b7280">История пуста.</div>';return;}var h='';s.forEach(function(d){var x=d.data();h+='<div class="history-row"><b>'+esc(x.type||'Операция')+'</b><br><span style="color:#8a93a6">'+fmtTime(x.createdAt)+'</span></div>';});box.innerHTML=h;});}
   var hb=document.createElement('button');hb.id='historyBtn';hb.title='История операций';hb.textContent='🧾';hb.onclick=openHistory;var sb=$('sidebarHeader');if(sb)sb.insertBefore(hb,$('btnNew'));
 
-  // login history
-  if(!window.towaLoginHistoryUid || window.towaLoginHistoryUid!==me.uid){window.towaLoginHistoryUid=me.uid;setTimeout(function(){if(me&&me.uid===window.towaLoginHistoryUid)db.collection('users').doc(me.uid).collection('loginHistory').add({at:firebase.firestore.FieldValue.serverTimestamp(),ua:navigator.userAgent||'',platform:navigator.platform||''}).catch(function(e){console.warn('loginHistory:',e);});},1500);}
+  // login history — auth-safe: `me` can be null while this script initializes
+  function recordLoginHistory(){
+    if(!me) return;
+    if(window.towaLoginHistoryUid===me.uid) return;
+    window.towaLoginHistoryUid=me.uid;
+    setTimeout(function(){
+      if(me && me.uid===window.towaLoginHistoryUid){
+        db.collection('users').doc(me.uid).collection('loginHistory').add({
+          at:firebase.firestore.FieldValue.serverTimestamp(),
+          ua:navigator.userAgent||'',
+          platform:navigator.platform||''
+        }).catch(function(e){console.warn('loginHistory:',e);});
+      }
+    },1500);
+  }
 })();
 </script>
 
