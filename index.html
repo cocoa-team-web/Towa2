@@ -44,6 +44,16 @@ input,textarea{font-family:inherit;outline:none;border:0;background:transparent;
 
 /* Towa v10 */
 .chat-online{color:#34d399;font-size:11px}.chat-offline{color:#8a93a6;font-size:11px}.msg-actions{display:flex;gap:4px;justify-content:flex-end;margin-top:5px;flex-wrap:wrap}.msg-actions button{font-size:10px;padding:4px 7px;border-radius:7px;border:1px solid #2a303c;background:#11151c;color:#cbd5e1;cursor:pointer}.msg-actions button:hover{background:#1b2230}.reply-preview{border-left:3px solid #7c3aed;padding:5px 8px;margin-bottom:5px;background:#10131a;border-radius:6px;font-size:11px;color:#aeb7c7}.pinned-bar{padding:8px 12px;background:#111827;border-bottom:1px solid #2a303c;font-size:12px;cursor:pointer}.pinned-bar b{color:#c4b5fd}.shop-sort{display:flex;gap:7px;margin:8px 0;flex-wrap:wrap}.shop-sort select,.shop-sort button{padding:8px;border:1px solid #2a303c;border-radius:9px;background:#0a0c10;color:#dbe3ef}.fav-star{background:none!important;border:0!important;font-size:20px!important;padding:0 4px!important}.limited-badge{display:inline-block;padding:3px 6px;border-radius:6px;background:#7c2d12;color:#fed7aa;font-size:10px}.plus-card{border:1px solid #7c3aed;border-radius:14px;padding:14px;background:linear-gradient(135deg,#171027,#0d1017);margin-top:12px}.plus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.plus-price{border:1px solid #33234d;border-radius:10px;padding:10px;text-align:center}.theme-chip{display:inline-block;padding:8px 10px;border:1px solid #2a303c;border-radius:9px;margin:4px;cursor:pointer}.profile-badge{display:inline-block;padding:3px 7px;border-radius:7px;background:#1e293b;color:#c4b5fd;font-size:10px;margin:2px}.profile-prefix{color:#fbbf24;font-weight:700;margin-right:4px}.collection-card{border:1px solid #2a303c;border-radius:12px;padding:12px;margin-bottom:8px}.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.admin-grid input,.admin-grid select{width:100%;box-sizing:border-box}.history-row{padding:10px;border:1px solid #2a303c;border-radius:10px;margin-bottom:7px;font-size:12px}.theme-darkviolet{--accent:#a78bfa}.theme-ocean{--accent:#38bdf8}.theme-sunset{--accent:#fb7185}
+
+/* Towa Settings */
+.settings-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 14px}
+.settings-row{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #2a303c;border-radius:12px;background:#111620}
+.settings-row .settings-text{flex:1}.settings-row b{font-size:13px}.settings-row small{display:block;color:#8a93a6;font-size:11px;margin-top:3px}
+.settings-switch{position:relative;width:44px;height:24px;flex:0 0 44px}.settings-switch input{opacity:0;width:0;height:0}.settings-slider{position:absolute;inset:0;background:#303744;border-radius:20px;cursor:pointer;transition:.2s}.settings-slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.settings-switch input:checked+.settings-slider{background:#00a9cc}.settings-switch input:checked+.settings-slider:before{transform:translateX(20px)}
+.settings-section-title{font-size:12px;font-weight:700;color:#00d2ff;margin:14px 0 7px}
+.settings-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.settings-actions button{width:100%}
+body.towa-compact #chatList .chat-item{padding-top:7px!important;padding-bottom:7px!important}
+body.towa-no-animations *{animation:none!important;transition:none!important}
 </style><style>
 #authScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#0a0c10;z-index:100;overflow-y:auto}
 #authBox{background:#161a22;border:1px solid #2a303c;border-radius:18px;padding:26px 22px;width:100%;max-width:380px}
@@ -220,6 +230,7 @@ input,textarea{color:var(--tg-text)!important}
       <button id="btnNew">+ Чат</button>
       <button id="adminBtn" class="hidden" title="Админ-панель">👑</button>
       <button id="btnProfile">👤</button>
+      <button id="settingsBtn" title="Настройки">⚙️</button>
     </div>
 
     <div id="meBadge">
@@ -408,9 +419,17 @@ input,textarea{color:var(--tg-text)!important}
 </div>
 
 <div class="modal" id="inventoryModal">
-  <div class="modal-box" style="max-width:520px">
+  <div class="modal-box" style="max-width:560px">
     <h3>🎒 Мой инвентарь</h3>
-    <div style="font-size:12px;color:#8a93a6;margin:6px 0 12px">Полученные подарки</div>
+    <div class="inv-tabs" style="display:flex;gap:6px;margin:10px 0;overflow:auto">
+      <button class="btn-primary inv-tab" data-inv-tab="gifts">🎁 Подарки</button>
+      <button class="btn-alt inv-tab" data-inv-tab="cases">🎲 Кейсы</button>
+    </div>
+    <div id="inventoryFilters" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">
+      <button class="btn-alt inv-filter" data-sort="rarity">✨ По редкости</button>
+      <button class="btn-alt inv-filter" data-sort="price-up">🔥 Цена ↑</button>
+      <button class="btn-alt inv-filter" data-sort="price-down">🔥 Цена ↓</button>
+    </div>
     <div id="inventoryList"></div>
     <button id="inventoryClose" class="btn-alt wide">Закрыть</button>
   </div>
@@ -435,6 +454,34 @@ input,textarea{color:var(--tg-text)!important}
 </div>
 
 <div class="modal" id="friendsModal"><div class="modal-box" style="max-width:520px"><h3>👥 Друзья</h3><div style="display:flex;gap:8px"><input id="friendUsername" placeholder="@username" style="flex:1"><button id="addFriendBtn" class="btn-primary" style="width:auto">Добавить</button></div><div id="friendsList" style="margin-top:12px"></div><div style="font-weight:700;margin:14px 0 8px">🚫 Чёрный список</div><div style="display:flex;gap:8px"><input id="blockUsername" placeholder="@username" style="flex:1"><button id="blockUserBtn" class="btn-alt" style="width:auto">Заблокировать</button></div><div id="blockedList" style="margin-top:10px"></div><div style="font-weight:700;margin:14px 0 8px">📊 Моя статистика Towa</div><div id="myStats" class="admin-grid"></div><button id="friendsClose" class="btn-alt wide">Закрыть</button></div></div>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-box" style="max-width:520px">
+    <h3>⚙️ Настройки Towa</h3>
+    <div class="settings-section-title">Функции Towa</div>
+    <div class="settings-actions">
+      <button id="settingsShop" class="btn-alt">🛍 Магазин</button>
+      <button id="settingsInventory" class="btn-alt">🎒 Инвентарь</button>
+      <button id="settingsFriends" class="btn-alt">👥 Друзья</button>
+      <button id="settingsProfile" class="btn-alt">👤 Профиль</button>
+      <button id="settingsNotifications" class="btn-alt">🔔 Уведомления</button>
+      <button id="settingsAdmin" class="btn-alt hidden">👑 Админ-панель</button>
+    </div>
+    <div class="settings-section-title">Поведение приложения</div>
+    <div class="settings-grid">
+      <div class="settings-row"><div class="settings-text"><b>🔔 Уведомления</b><small>Показывать счётчик новых уведомлений</small></div><label class="settings-switch"><input id="setNotifications" type="checkbox" checked><span class="settings-slider"></span></label></div>
+      <div class="settings-row"><div class="settings-text"><b>🔊 Звуки</b><small>Разрешить звуковые сигналы интерфейса</small></div><label class="settings-switch"><input id="setSounds" type="checkbox" checked><span class="settings-slider"></span></label></div>
+      <div class="settings-row"><div class="settings-text"><b>📦 Компактный список чатов</b><small>Уменьшает расстояние между чатами</small></div><label class="settings-switch"><input id="setCompact" type="checkbox"><span class="settings-slider"></span></label></div>
+      <div class="settings-row"><div class="settings-text"><b>✨ Анимации</b><small>Плавные переходы интерфейса</small></div><label class="settings-switch"><input id="setAnimations" type="checkbox" checked><span class="settings-slider"></span></label></div>
+      <div class="settings-row"><div class="settings-text"><b>🛍 Подтверждать покупки</b><small>Запрашивать подтверждение перед покупкой</small></div><label class="settings-switch"><input id="setConfirmBuy" type="checkbox" checked><span class="settings-slider"></span></label></div>
+    </div>
+    <div class="settings-section-title">Данные на устройстве</div>
+    <div class="settings-actions">
+      <button id="settingsReset" class="btn-alt">↩️ Сбросить настройки</button>
+      <button id="settingsClose" class="btn-primary">Готово</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div><script>
 window.onerror = function(m, s, l){
   var b = document.getElementById("errBox");
@@ -751,7 +798,9 @@ auth.onAuthStateChanged(function(user){
     if (msgUnsub){ try{ msgUnsub(); }catch(e){} msgUnsub = null; }
     if (typingUnsub){ try{ typingUnsub(); }catch(e){} typingUnsub = null; }
     if (incomingGiftsUnsub){ try{ incomingGiftsUnsub(); }catch(e){} incomingGiftsUnsub = null; }
-    if (onlineInterval){ clearInterval(onlineInterval); onlineInterval = null; }
+    stopOnlinePresence();
+    if (presenceUnsub){ try{presenceUnsub();}catch(e){} presenceUnsub=null; }
+    if (presenceUiTimer){ clearInterval(presenceUiTimer); presenceUiTimer=null; }
     $("app").classList.add("hidden");
     $("authScreen").classList.remove("hidden");
     setAuthMode("login");
@@ -795,9 +844,10 @@ auth.onAuthStateChanged(function(user){
       showAuthError("");
       try{ renderMe(); }catch(e){}
       try{ subscribeChats(); }catch(e){}
-      try{ markOnline(); }catch(e){}
+      try{ markOnline(); setupPresenceUi(); }catch(e){}
       try{ loadMyFire(); }catch(e){}
       try{ subscribeIncomingGifts(); }catch(e){}
+      try{ recordLoginHistory(); }catch(e){ console.warn('loginHistory init:', e); }
     })
     .catch(function(e){
       console.error("PROFILE:", e);
@@ -805,23 +855,46 @@ auth.onAuthStateChanged(function(user){
     });
 });
 var onlineInterval = null;
+var onlinePulseTimer = null;
+var presenceUnsub = null;
+var presenceUiTimer = null;
+var onlineSessionId = 0;
 var quotaCheckInFlight = false;
 var lastQuotaCheckAt = 0;
 
+function stopOnlinePresence(){
+  if (onlineInterval){ clearInterval(onlineInterval); onlineInterval=null; }
+  if (onlinePulseTimer){ clearTimeout(onlinePulseTimer); onlinePulseTimer=null; }
+  onlineSessionId++;
+}
 function markOnline(){
-    if (onlineInterval) clearInterval(onlineInterval);
+  stopOnlinePresence();
   if (!me) return;
-  db.collection("users").doc(me.uid).update({
-    online: true,
-    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+  var uid=me.uid, session=onlineSessionId;
+  function pulse(){
+    if (!me || me.uid!==uid || session!==onlineSessionId) return;
+    db.collection("users").doc(uid).update({
+      online:true,
+      lastSeen:firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e){ console.warn("presence:",e); });
+    onlinePulseTimer=setTimeout(pulse,10000);
+  }
+  pulse();
+}
+function markOffline(){
+  if (!me) return;
+  var uid=me.uid;
+  stopOnlinePresence();
+  db.collection("users").doc(uid).update({
+    online:false,
+    lastSeen:firebase.firestore.FieldValue.serverTimestamp()
   }).catch(function(){});
-  onlineInterval = setInterval(function(){
-    if (!me) return;
-    db.collection("users").doc(me.uid).update({
-      online: true,
-      lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(){});
-  }, 60000);
+}
+function setupPresenceUi(){
+  if (presenceUiTimer) clearInterval(presenceUiTimer);
+  presenceUiTimer=setInterval(function(){
+    if (window.refreshPresenceHeader) window.refreshPresenceHeader();
+  },5000);
 }
 
 function renderMe(){
@@ -1447,7 +1520,7 @@ on("logoutBtn", "click", function(){
   db.collection("users").doc(me.uid).update({ online: false }).catch(function(){});
   if (chatsUnsub) chatsUnsub(); if (msgUnsub) msgUnsub(); if (typingUnsub) typingUnsub();
   if (incomingGiftsUnsub) incomingGiftsUnsub();
-  if (onlineInterval){ clearInterval(onlineInterval); onlineInterval = null; }
+  markOffline();
   auth.signOut();
 });
 
@@ -1622,15 +1695,32 @@ function renderShop(){
     list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
   },function(e){console.error("shop:",e);list.innerHTML='<div style="padding:20px;color:#f87171">Не удалось загрузить магазин.<br><small>'+esc(e.code||e.message||"unknown")+'</small></div>';});
 }
+var inventoryTab='gifts';
+var inventorySort='rarity';
+function invRarityRank(r){return {common:1,rare:2,epic:3,legendary:4}[String(r||'common').toLowerCase()]||1;}
 function renderInventory(){
   var list=$("inventoryList"); if(!list||!me)return;
+  $("inventoryFilters").style.display=inventoryTab==='gifts'?'flex':'none';
+  document.querySelectorAll('.inv-tab').forEach(function(b){b.classList.toggle('btn-primary',b.dataset.invTab===inventoryTab);b.classList.toggle('btn-alt',b.dataset.invTab!==inventoryTab);});
   list.innerHTML='<div style="padding:20px;text-align:center;color:#6b7280">Загрузка...</div>';
+  if(inventoryTab==='cases'){
+    db.collection("users").doc(me.uid).collection("cases").get().then(function(snap){
+      if(snap.empty){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">🎲 Кейсов пока нет.</div>';return;}
+      var groups={}; snap.forEach(function(doc){var d=doc.data()||{},key=d.caseId||doc.id;if(!groups[key])groups[key]={d:d,count:0};groups[key].count++;});
+      var h='<div class="inventory-grid">';
+      Object.keys(groups).forEach(function(k){var x=groups[k],d=x.d;h+='<div class="inventory-card">'+(d.photoUrl?'<img src="'+esc(d.photoUrl)+'" onerror="this.style.display=\'none\'">':'<div class="emoji">'+esc(d.emoji||'🎲')+'</div>')+'<div style="font-weight:700;margin-top:7px">'+esc(d.name||'Кейс')+'</div><div style="color:#fbbf24;font-size:12px;margin-top:4px">🔥 '+Number(d.price||d.cost||0)+'</div><div style="color:#8a93a6;font-size:11px;margin-top:5px">x'+x.count+'</div></div>';});
+      list.innerHTML=h+'</div>';
+    }).catch(function(e){list.innerHTML='<div style="color:#f87171">❌ '+esc(e.message)+'</div>';});
+    return;
+  }
   db.collection("users").doc(me.uid).collection("gifts").orderBy("createdAt","desc").limit(100).get().then(function(snap){
-    if(snap.empty){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">🎒 Инвентарь пуст.</div>';return;}
+    if(snap.empty){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">🎁 Подарков пока нет.</div>';return;}
     var groups={};
-    snap.forEach(function(doc){var d=doc.data();var key=d.giftId||doc.id;if(!groups[key])groups[key]={d:d,count:0};groups[key].count++;});
-    var h='<div class="inventory-grid">';
-    Object.keys(groups).forEach(function(k){var x=groups[k],d=x.d,r=rarityClass(d.rarity);h+='<div class="inventory-card '+r+'">'+(d.photoUrl?'<img src="'+esc(d.photoUrl)+'" onerror="this.style.display=\'none\'">':'<div class="emoji">'+esc(d.emoji||"🎁")+'</div>')+'<div style="font-weight:700;margin-top:7px">'+esc(d.name||"Подарок")+'</div><span class="gift-rarity '+r+'">'+esc(rarityName(r))+'</span><div style="color:#8a93a6;font-size:11px;margin-top:5px">x'+x.count+'</div></div>';});
+    snap.forEach(function(doc){var d=doc.data()||{},key=d.giftId||doc.id;if(!groups[key])groups[key]={d:d,count:0};groups[key].count++;});
+    var arr=Object.keys(groups).map(function(k){var x=groups[k];x.d.price=Number(x.d.price||0);return x;});
+    arr.sort(function(a,b){if(inventorySort==='price-up')return a.d.price-b.d.price;if(inventorySort==='price-down')return b.d.price-a.d.price;return invRarityRank(b.d.rarity)-invRarityRank(a.d.rarity)||b.d.price-a.d.price;});
+    var h='<div style="display:grid;gap:7px;margin-bottom:10px"><div style="font-size:12px;color:#8a93a6">Подарков: '+arr.reduce(function(n,x){return n+x.count},0)+' • Групп: '+arr.length+'</div></div><div class="inventory-grid">';
+    arr.forEach(function(x){var d=x.d,r=rarityClass(d.rarity);h+='<div class="inventory-card '+r+'">'+(d.photoUrl?'<img src="'+esc(d.photoUrl)+'" onerror="this.style.display=\'none\'">':'<div class="emoji">'+esc(d.emoji||'🎁')+'</div>')+'<div style="font-weight:700;margin-top:7px">'+esc(d.name||'Подарок')+'</div><span class="gift-rarity '+r+'">'+esc(rarityName(d.rarity))+'</span><div style="color:#fbbf24;font-size:12px;margin-top:5px">🔥 '+d.price+'</div><div style="color:#8a93a6;font-size:11px;margin-top:3px">x'+x.count+'</div></div>';});
     list.innerHTML=h+'</div>';
   }).catch(function(e){list.innerHTML='<div style="color:#f87171">❌ '+esc(e.message)+'</div>';});
 }
@@ -1645,6 +1735,8 @@ on("giftSearch","input",function(){shopSearch=this.value;renderShop();});
 document.querySelectorAll("#giftCategories .shop-cat").forEach(function(b){b.addEventListener("click",function(){shopCategory=this.dataset.cat;document.querySelectorAll("#giftCategories .shop-cat").forEach(function(x){x.classList.remove("active");});this.classList.add("active");renderShop();});});
 on("inventoryBtn","click",function(){$("inventoryModal").classList.add("show");renderInventory();});
 on("inventoryClose","click",function(){$("inventoryModal").classList.remove("show");});
+document.querySelectorAll('.inv-tab').forEach(function(b){b.addEventListener('click',function(){inventoryTab=this.dataset.invTab;renderInventory();});});
+document.querySelectorAll('.inv-filter').forEach(function(b){b.addEventListener('click',function(){inventorySort=this.dataset.sort;renderInventory();});});
 on("notifyBtn","click",function(){localStorage.setItem("towaNotifyCount","0");updateNotifyBadge();$("notifyModal").classList.add("show");renderNotifications();});
 on("notifyClose","click",function(){$("notifyModal").classList.remove("show");});
 updateNotifyBadge();
@@ -1697,7 +1789,12 @@ on("sendGiftBtn","click",function(){
   var uname=$("giftRecipient").value.trim().toLowerCase().replace(/^@/,"");
   if(!validUsername(uname)){toast("Неверный @username","error");return;} if(uname===profile.username){toast("Нельзя подарить самому себе","error");return;}
   var price=Number(selectedGift.price||0); if(price<1){toast("Неверная цена","error");return;}
-  var senderRef=db.collection("users").doc(me.uid);
+  // Capture the authenticated user before entering async callbacks.
+  // This prevents "Cannot read properties of null (reading 'uid')" if auth state changes while the request is running.
+  var senderUid=me.uid;
+  var senderUsername=(profile&&profile.username)||"";
+  var senderNickname=(profile&&profile.nickname)||"";
+  var senderRef=db.collection("users").doc(senderUid);
   db.collection("usernames").doc(uname).get().then(function(u){if(!u.exists)throw new Error("Пользователь @"+uname+" не найден");var rid=u.data().uid,r=db.collection("users").doc(rid),giftRef=r.collection("gifts").doc(),sentRef=senderRef.collection("sentGifts").doc(giftRef.id);return db.runTransaction(function(tx){return tx.get(senderRef).then(function(sender){var bal=Number(sender.data().fire||0);if(bal<price)throw new Error("Недостаточно 🔥");tx.update(senderRef,{fire:firebase.firestore.FieldValue.increment(-price)});
       var shopRef=db.collection('shop').doc(selectedGift.id);
       return tx.get(shopRef).then(function(shopDoc){
@@ -1705,7 +1802,7 @@ on("sendGiftBtn","click",function(){
         var shopData=shopDoc.data()||{};
         if(shopData.limited&&shopData.limitedUntil){var lu=shopData.limitedUntil.toDate?shopData.limitedUntil.toDate():new Date(shopData.limitedUntil);if(!isNaN(lu.getTime())&&lu<new Date())throw new Error('Срок подарка истёк');}
         if(shopData.stock!=null){var stock=Number(shopData.stock);if(!Number.isFinite(stock)||stock<1)throw new Error('Подарок закончился');tx.update(shopRef,{stock:firebase.firestore.FieldValue.increment(-1)});}
-        tx.set(giftRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,rarity:selectedGift.rarity||"common",category:selectedGift.category||"normal",fromUid:me.uid,fromUsername:profile.username,fromNickname:profile.nickname||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.set(sentRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,rarity:selectedGift.rarity||"common",category:selectedGift.category||"normal",toUid:rid,toUsername:uname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.set(giftRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,rarity:selectedGift.rarity||"common",category:selectedGift.category||"normal",fromUid:senderUid,fromUsername:senderUsername,fromNickname:senderNickname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.set(sentRef,{giftId:selectedGift.id,name:selectedGift.name||"Подарок",emoji:selectedGift.emoji||"🎁",photoUrl:selectedGift.photoUrl||"",price:price,rarity:selectedGift.rarity||"common",category:selectedGift.category||"normal",toUid:rid,toUsername:uname,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
       });
     });});
   }).then(function(){profile.fire=Math.max(0,(profile.fire||0)-price);renderMe();loadMyFire();$("giftSendModal").classList.remove("show");selectedGift=null;toast("🎁 Подарок отправлен","success");}).catch(function(e){toast("❌ "+e.message,"error");});
@@ -1757,7 +1854,40 @@ console.log("Towa v8.0 loaded ✓");
     var parts=(openChatData&&openChatData.participants)||[];var upd={lastMessage:text.slice(0,40),lastMessageType:'text',lastFrom:me.uid,lastTime:now};var inc=firebase.firestore.FieldValue.increment(1);parts.forEach(function(uid){if(uid!==me.uid)upd['unread.'+uid]=inc;});
     msgRef.set(data).then(function(){return chatRef.update(upd);}).then(function(){addHistory('sendMessage',{chatId:openChatId});replyTo=null;inp.placeholder='Сообщение...';}).catch(function(e){inp.value=text;toast('Ошибка: '+e.message,'error');});
   };
-  window.openChat=function(chatId){oldOpenChat(chatId);setTimeout(function(){var c=openChatData;if(!c)return;var h=$('mainHeaderInfo');if(c.type==='private'){var other=findOther(c.participants,me.uid);db.collection('users').doc(other).get().then(function(d){var u=d.data()||{};var sub=u.online?'🟢 Онлайн':(u.lastSeen?'Был(а) '+fmtTime(u.lastSeen):'Не в сети');var subEl=h&&h.querySelector('.sub');if(subEl)subEl.innerHTML=sub;});}},80);};
+  window.refreshPresenceHeader=function(){
+  var h=$('mainHeaderInfo'), c=openChatData;
+  if(!h||!c||c.type!=='private'||!me)return;
+  var other=findOther(c.participants,me.uid);
+  if(!other)return;
+  db.collection('users').doc(other).get().then(function(d){
+    var u=d.data()||{}, online=false, last=u.lastSeen;
+    if(u.online&&last){
+      var t=last.toDate?last.toDate().getTime():new Date(last).getTime();
+      online=!isNaN(t)&&(Date.now()-t<22000);
+    } else if(u.online&&!last) online=true;
+    var sub=online?'🟢 Онлайн':(last?'Был(а) '+fmtTime(last):'Не в сети');
+    var subEl=h.querySelector('.sub');if(subEl)subEl.innerHTML=sub;
+  }).catch(function(){});
+};
+window.openChat=function(chatId){
+  if(presenceUnsub){try{presenceUnsub();}catch(e){}presenceUnsub=null;}
+  oldOpenChat(chatId);
+  setTimeout(function(){
+    var c=openChatData;if(!c||c.type!=='private'||!me)return;
+    var other=findOther(c.participants,me.uid);if(!other)return;
+    var h=$('mainHeaderInfo'),subEl=h&&h.querySelector('.sub');
+    if(subEl)subEl.innerHTML='⏳ Проверка...';
+    presenceUnsub=db.collection('users').doc(other).onSnapshot(function(d){
+      var u=d.data()||{},online=false,last=u.lastSeen;
+      if(u.online&&last){
+        var t=last.toDate?last.toDate().getTime():new Date(last).getTime();
+        online=!isNaN(t)&&(Date.now()-t<22000);
+      } else if(u.online&&!last) online=true;
+      if(subEl)subEl.innerHTML=online?'🟢 Онлайн':(last?'Был(а) '+fmtTime(last):'Не в сети');
+    },function(){if(subEl)subEl.innerHTML='Не в сети';});
+    window.refreshPresenceHeader();
+  },30);
+};
 
   // Shop: favorites, sorting, collections and limited gifts
   window.renderShop=function(){var list=$('shopList');if(!list)return;if(profile)$('shopFireBalance').textContent=profile.fire||0;if($('shopAdmin'))$('shopAdmin').classList.toggle('hidden',!isOwner());if(shopUnsub){try{shopUnsub();}catch(e){}}
@@ -1775,7 +1905,7 @@ console.log("Towa v8.0 loaded ✓");
   function renderCollections(){var list=$('shopList');if(!list)return;db.collection('collections').where('active','==',true).get().then(function(snap){if(snap.empty){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">Коллекций пока нет.</div>';return;}var h='';snap.forEach(function(doc){var d=doc.data();h+='<div class="collection-card"><b>📚 '+esc(d.name||'Коллекция')+'</b><div style="font-size:12px;color:#8a93a6;margin-top:4px">'+esc(d.description||'')+'</div><div style="font-size:11px;color:#a78bfa;margin-top:6px">Подарков: '+((d.giftIds||[]).length)+'</div></div>';});list.innerHTML=h;}).catch(function(e){list.innerHTML='<div style="color:#f87171">'+esc(e.message)+'</div>';});}
 
   // Plus and profile decorations
-  function renderProfileExtras(){if(!$('profileBadges'))return;var bs=profile.badges||[];$('profileBadges').innerHTML=bs.map(function(x){return '<span class="profile-badge">🏷️ '+esc(x)+'</span>';}).join('')||'<span style="font-size:11px;color:#6b7280">Бейджей нет</span>';$('profilePrefix').innerHTML=profile.prefix?'<span class="profile-prefix">'+esc(profile.prefix)+'</span>':'<span style="font-size:11px;color:#6b7280">Префикс не установлен</span>';var themes=['default','violet','ocean','sunset'];$('profileThemes').innerHTML=themes.map(function(t){return '<span class="theme-chip" data-theme="'+t+'">'+({default:'⚪ Стандарт',violet:'🟣 Violet',ocean:'🔵 Ocean',sunset:'🌅 Sunset'}[t])+'</span>';}).join('');document.querySelectorAll('#profileThemes .theme-chip').forEach(function(b){b.onclick=function(){var theme=this.dataset.theme;if(theme===(profile.profileTheme||'default'))return;if(Number(profile.fire||0)<10){toast('Нужно 10 🔥','error');return;}db.collection('users').doc(me.uid).update({fire:firebase.firestore.FieldValue.increment(-10),profileTheme:theme}).then(function(){profile.fire=Math.max(0,Number(profile.fire||0)-10);profile.profileTheme=theme;renderMe();toast('🎨 Тема изменена за 10 🔥','success');addHistory('themePurchase',{theme:theme,price:10});});};});if($('plusStatus'))$('plusStatus').textContent=isActivePlus()?'💎 Towa Plus активен':'Towa Plus не подключён';document.querySelectorAll('.plus-buy').forEach(function(b){b.onclick=function(){var plan=this.dataset.plan,price=plan==='month'?550:plan==='year'?6000:45000;if(Number(profile.fire||0)<price){toast('Недостаточно 🔥','error');return;}if(!confirm('Купить Towa Plus за '+price+' 🔥?'))return;var upd={fire:firebase.firestore.FieldValue.increment(-price),plusPlan:plan,plusStarted:firebase.firestore.FieldValue.serverTimestamp(),plus:true};if(plan==='month'){upd.plus=false;upd.plusUntil=new Date(Date.now()+30*864e5);}if(plan==='year'){upd.plus=false;upd.plusUntil=new Date(Date.now()+365*864e5);}if(plan==='lifetime'){upd.plus=true;upd.plusUntil=null;}db.collection('users').doc(me.uid).update(upd).then(function(){profile.fire=Math.max(0,Number(profile.fire||0)-price);profile.plusPlan=plan;profile.plus=plan==='lifetime';profile.plusStarted=new Date();profile.plusUntil=plan==='lifetime'?null:new Date(Date.now()+(plan==='month'?30:365)*86400000);renderMe();renderProfileExtras();addHistory('plusPurchase',{plan:plan,price:price});toast('💎 Towa Plus активирован','success');});};});}
+  function renderProfileExtras(){if(!$('profileBadges'))return;var bs=profile.badges||[];$('profileBadges').innerHTML=bs.map(function(x){return '<span class="profile-badge">🏷️ '+esc(x)+'</span>';}).join('')||'<span style="font-size:11px;color:#6b7280">Бейджей нет</span>';$('profilePrefix').innerHTML=profile.prefix?'<span class="profile-prefix">'+esc(profile.prefix)+'</span>':'<span style="font-size:11px;color:#6b7280">Префикс не установлен</span>';var themes=['default','violet','ocean','sunset'];$('profileThemes').innerHTML=themes.map(function(t){return '<span class="theme-chip" data-theme="'+t+'">'+({default:'⚪ Стандарт',violet:'🟣 Violet',ocean:'🔵 Ocean',sunset:'🌅 Sunset'}[t])+'</span>';}).join('');document.querySelectorAll('#profileThemes .theme-chip').forEach(function(b){b.onclick=function(){var theme=this.dataset.theme;if(theme===(profile.profileTheme||'default'))return;if(Number(profile.fire||0)<10){toast('Нужно 10 🔥','error');return;}db.collection('users').doc(me.uid).update({fire:firebase.firestore.FieldValue.increment(-10),profileTheme:theme}).then(function(){profile.fire=Math.max(0,Number(profile.fire||0)-10);profile.profileTheme=theme;renderMe();toast('🎨 Тема изменена за 10 🔥','success');addHistory('themePurchase',{theme:theme,price:10});});};});if($('plusStatus'))$('plusStatus').textContent=isActivePlus()?'💎 Towa Plus активен':'Towa Plus не подключён';document.querySelectorAll('.plus-buy').forEach(function(b){b.onclick=function(){var plan=this.dataset.plan,price=plan==='month'?550:plan==='year'?6000:45000;if(Number(profile.fire||0)<price){toast('Недостаточно 🔥','error');return;}if(!confirm('Купить Towa Plus за '+price+' 🔥?'))return;var upd={fire:firebase.firestore.FieldValue.increment(-price),plusPlan:plan,plusStarted:firebase.firestore.FieldValue.serverTimestamp()};if(plan==='month')upd.plusUntil=new Date(Date.now()+30*864e5);if(plan==='year')upd.plusUntil=new Date(Date.now()+365*864e5);if(plan==='lifetime'){upd.plus=true;upd.plusUntil=null;}db.collection('users').doc(me.uid).update(upd).then(function(){profile.fire=Math.max(0,Number(profile.fire||0)-price);profile.plusPlan=plan;profile.plus=plan==='lifetime';profile.plusStarted=new Date();profile.plusUntil=plan==='lifetime'?null:new Date(Date.now()+(plan==='month'?30:365)*86400000);renderMe();renderProfileExtras();addHistory('plusPurchase',{plan:plan,price:price});toast('💎 Towa Plus активирован','success');});};});}
   on('btnProfile','click',function(){setTimeout(renderProfileExtras,50);});
 
   // Notifications: generic activity streams
@@ -1795,8 +1925,21 @@ console.log("Towa v8.0 loaded ✓");
   function openHistory(){if(!me)return;$('historyModal').classList.add('show');var box=$('historyList');box.innerHTML='<div style="padding:20px;text-align:center">Загрузка...</div>';db.collection('users').doc(me.uid).collection('history').orderBy('createdAt','desc').limit(100).get().then(function(s){if(s.empty){box.innerHTML='<div style="padding:20px;color:#6b7280">История пуста.</div>';return;}var h='';s.forEach(function(d){var x=d.data();h+='<div class="history-row"><b>'+esc(x.type||'Операция')+'</b><br><span style="color:#8a93a6">'+fmtTime(x.createdAt)+'</span></div>';});box.innerHTML=h;});}
   var hb=document.createElement('button');hb.id='historyBtn';hb.title='История операций';hb.textContent='🧾';hb.onclick=openHistory;var sb=$('sidebarHeader');if(sb)sb.insertBefore(hb,$('btnNew'));
 
-  // login history
-  if(!window.towaLoginHistoryUid || window.towaLoginHistoryUid!==me.uid){window.towaLoginHistoryUid=me.uid;setTimeout(function(){if(me&&me.uid===window.towaLoginHistoryUid)db.collection('users').doc(me.uid).collection('loginHistory').add({at:firebase.firestore.FieldValue.serverTimestamp(),ua:navigator.userAgent||'',platform:navigator.platform||''}).catch(function(e){console.warn('loginHistory:',e);});},1500);}
+  // login history — auth-safe: `me` can be null while this script initializes
+  function recordLoginHistory(){
+    if(!me) return;
+    if(window.towaLoginHistoryUid===me.uid) return;
+    window.towaLoginHistoryUid=me.uid;
+    setTimeout(function(){
+      if(me && me.uid===window.towaLoginHistoryUid){
+        db.collection('users').doc(me.uid).collection('loginHistory').add({
+          at:firebase.firestore.FieldValue.serverTimestamp(),
+          ua:navigator.userAgent||'',
+          platform:navigator.platform||''
+        }).catch(function(e){console.warn('loginHistory:',e);});
+      }
+    },1500);
+  }
 })();
 </script>
 
@@ -1919,7 +2062,7 @@ console.log("Towa v8.0 loaded ✓");
       if(plan==='month')upd.plusUntil=new Date(Date.now()+30*864e5);
       if(plan==='year')upd.plusUntil=new Date(Date.now()+365*864e5);
       if(plan==='lifetime'){upd.plus=true;upd.plusUntil=null;}
-      db.collection('users').doc(me.uid).update(upd).then(function(){
+      db.collection('users').doc(purchaseUid).update(upd).then(function(){
         profile.fire=Math.max(0,Number(profile.fire||0)-price);profile.plusPlan=plan;profile.plus=plan==='lifetime';profile.plusStarted=new Date();profile.plusUntil=plan==='lifetime'?null:new Date(Date.now()+(plan==='month'?30:365)*86400000);
         renderMe();renderProfileExtras();addHistory('plusPurchase',{plan:plan,price:price,basePrice:base,discountPercent:pct});toast('💎 Towa Plus активирован','success');
       }).catch(function(err){toast('❌ '+err.message,'error');});
@@ -2014,6 +2157,40 @@ console.log("Towa v8.0 loaded ✓");
     }).then(function(x){toast2('🎟️ Промокод активирован','success');return x;});
   };
 })();
+
+// Towa user settings
+(function(){
+  var defaults={notifications:true,sounds:true,compact:false,animations:true,confirmBuy:true};
+  function setting(k){var v=localStorage.getItem('towaSetting_'+k);return v===null?defaults[k]:v==='1';}
+  function saveSetting(k,v){localStorage.setItem('towaSetting_'+k,v?'1':'0');}
+  function applySettings(){
+    document.body.classList.toggle('towa-compact',setting('compact'));
+    document.body.classList.toggle('towa-no-animations',!setting('animations'));
+    var n=$('notifyCount'); if(n&&!setting('notifications'))n.classList.add('hidden');
+  }
+  function loadSettingsUI(){
+    ['notifications','sounds','compact','animations','confirmBuy'].forEach(function(k){var el=$('set'+k.charAt(0).toUpperCase()+k.slice(1));if(el)el.checked=setting(k);});
+    applySettings();
+    var a=$('settingsAdmin'); if(a)a.classList.toggle('hidden',typeof owner==='function'?!owner():true);
+  }
+  function openSettings(){loadSettingsUI();$('settingsModal').classList.add('show');}
+  on('settingsBtn','click',openSettings);
+  on('settingsClose','click',function(){$('settingsModal').classList.remove('show');});
+  on('settingsShop','click',function(){$('settingsModal').classList.remove('show');$('shopBtn').click();});
+  on('settingsInventory','click',function(){$('settingsModal').classList.remove('show');$('inventoryBtn').click();});
+  on('settingsFriends','click',function(){$('settingsModal').classList.remove('show');$('friendsBtn').click();});
+  on('settingsProfile','click',function(){$('settingsModal').classList.remove('show');$('btnProfile').click();});
+  on('settingsNotifications','click',function(){$('settingsModal').classList.remove('show');$('notifyBtn').click();});
+  on('settingsAdmin','click',function(){$('settingsModal').classList.remove('show');if(!$('adminBtn').classList.contains('hidden'))$('adminBtn').click();});
+  ['notifications','sounds','compact','animations','confirmBuy'].forEach(function(k){
+    var id='set'+k.charAt(0).toUpperCase()+k.slice(1);
+    on(id,'change',function(){saveSetting(k,this.checked);applySettings();if(k==='notifications'&&this.checked&&typeof updateNotifyBadge==='function')updateNotifyBadge();});
+  });
+  on('settingsReset','click',function(){Object.keys(defaults).forEach(function(k){localStorage.removeItem('towaSetting_'+k);});loadSettingsUI();if(typeof toast2==='function')toast2('⚙️ Настройки сброшены','success');});
+  window.towaSetting=setting;
+  applySettings();
+})();
+
 </script>
 </body>
 </html>
