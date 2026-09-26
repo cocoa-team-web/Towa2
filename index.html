@@ -146,7 +146,7 @@ body.towa-no-animations *{animation:none!important;transition:none!important}
 .modal-box button.wide{width:100%;padding:12px;border-radius:10px;font-weight:600;font-size:14px;margin-top:8px}
 .modal-actions{display:flex;gap:8px;margin-top:8px}
 .modal-actions button{flex:1}
-.tabs{display:flex;gap:4px;margin-bottom:14px;background:#0a0c10;padding:4px;border-radius:10px}
+.tabs{display:flex;gap:4px;margin-bottom:14px;background:#0a0c10;padding:4px;border-radius:10px}.tabs#adminTabs{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;justify-content:flex-start;scrollbar-width:thin}.tabs#adminTabs button{flex:0 0 auto;white-space:nowrap}
 .tabs button{flex:1;background:transparent;border:0;color:#8a93a6;padding:9px;border-radius:8px;font-size:12px;font-weight:600}
 .tabs button.active{background:#00d2ff;color:#000}
 .admin-stat{padding:12px;border:1px solid #2a303c;border-radius:12px;background:#0a0c10;text-align:center}.admin-stat b{display:block;font-size:20px;margin-top:3px}.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#161a22;color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;z-index:999;display:none;font-size:13px;max-width:90%;border:1px solid #2a303c;text-align:center}
@@ -228,7 +228,7 @@ input,textarea{color:var(--tg-text)!important}
       <button id="notifyBtn" title="Уведомления">🔔<span id="notifyCount" class="hidden">0</span></button>
       <button id="friendsBtn" title="Друзья">👥</button>
       <button id="btnNew">+ Чат</button>
-      <button id="adminBtn" title="Админ-панель">👑</button><button id="caseAdminBtn" class="hidden" title="Создание кейсов">🎲</button>
+      <button id="adminBtn" class="hidden" title="Админ-панель">👑</button>
       <button id="btnProfile">👤</button>
       <button id="settingsBtn" title="Настройки">⚙️</button>
     </div>
@@ -906,9 +906,7 @@ function renderMe(){
   var f = $("meFireCount");
   if (f) f.textContent = profile.fire || 0;
   var ab = $("adminBtn");
-  if (ab) ab.classList.remove("hidden");
-  var cb = $("caseAdminBtn");
-  if (cb) cb.classList.toggle("hidden", !isOwner());
+  if (ab) ab.classList.toggle("hidden", !isOwner());
 }
 
 function loadMyFire(){
@@ -1619,14 +1617,6 @@ function adminAdjustFire(uid,sign){
   }).catch(function(e){toast("❌ "+e.message,"error");});
 }
 on("adminBtn","click",openAdminPanel);
-on("caseAdminBtn","click",function(){
-  if(!isOwner()){toast("Нет доступа","error");return;}
-  openAdminPanel();
-  setTimeout(function(){
-    var b=document.querySelector('#adminTabs button[data-admin-tab="cases"]');
-    if(b) b.click();
-  },0);
-});
 on("adminClose","click",closeAdminPanel);
 document.querySelectorAll("#adminTabs button").forEach(function(b){b.addEventListener("click",function(){setAdminTab(this.dataset.adminTab);});});
 on("adminUserFind","click",findAdminUser);
@@ -1689,7 +1679,7 @@ function renderShop(){
         '<div style="flex:1;min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(d.name||"Подарок")+'</div>'+
         '<span class="gift-rarity '+r+'">'+esc(rarityName(r))+'</span>'+
         '<div style="color:#fbbf24;font-size:12px;margin-top:5px">🔥 '+Number(d.price||0)+' · '+esc(categoryName(d.category||"normal"))+'</div></div>'+
-        '<button class="btn-primary gift-own-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Купить</button><button class="btn-alt gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Подарить</button>'+
+        '<button class="btn-primary gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Подарить</button>'+
         (isOwner()?'<button class="btn-alt gift-delete" data-id="'+esc(d.id)+'" style="padding:9px 10px">🗑</button>':"")+
       '</div>';
     });
@@ -1700,33 +1690,6 @@ function renderShop(){
         selectedGift=Object.assign({id:d.id},d.data());
         $("giftSendInfo").innerHTML='<div class="gift-card '+rarityClass(selectedGift.rarity)+'" style="margin:0"><div class="gift-emoji">'+esc(selectedGift.emoji||"🎁")+'</div><div><b>'+esc(selectedGift.name||"Подарок")+'</b><br><span class="gift-rarity '+rarityClass(selectedGift.rarity)+'">'+esc(rarityName(selectedGift.rarity))+'</span><br>🔥 '+Number(selectedGift.price||0)+'</div></div>';
         $("giftRecipient").value="";$("giftSendModal").classList.add("show");
-      }).catch(function(e){toast("❌ "+e.message,"error");});
-    };});
-    list.querySelectorAll(".gift-own-buy").forEach(function(b){b.onclick=function(){
-      if(!me){toast("Войди в аккаунт","error");return;}
-      var giftId=this.dataset.id;
-      db.collection("shop").doc(giftId).get().then(function(doc){
-        if(!doc.exists)throw new Error("Подарок не найден");
-        var g=doc.data()||{},price=Number(g.price||0);
-        if(g.active!==true)throw new Error("Подарок недоступен");
-        if(price<1)throw new Error("Неверная цена");
-        if(g.limited&&g.limitedUntil){var lu=g.limitedUntil.toDate?g.limitedUntil.toDate():new Date(g.limitedUntil);if(!isNaN(lu.getTime())&&lu<new Date())throw new Error("Срок подарка истёк");}
-        if(g.stock!=null&&Number(g.stock)<1)throw new Error("Подарок закончился");
-        if(Number(profile&&profile.fire||0)<price)throw new Error("Недостаточно 🔥");
-        var uid=me.uid,userRef=db.collection("users").doc(uid),shopRef=db.collection("shop").doc(giftId),giftRef=userRef.collection("gifts").doc();
-        return db.runTransaction(function(tx){
-          return Promise.all([tx.get(userRef),tx.get(shopRef)]).then(function(res){
-            var u=res[0],shop=res[1];if(!u.exists||!shop.exists)throw new Error("Подарок больше недоступен");
-            var x=shop.data()||{},p=Number(x.price||0),bal=Number(u.data().fire||0);
-            if(x.active!==true)throw new Error("Подарок недоступен");
-            if(p<1||bal<p)throw new Error(bal<p?"Недостаточно 🔥":"Неверная цена");
-            if(x.stock!=null){var stock=Number(x.stock);if(!Number.isFinite(stock)||stock<1)throw new Error("Подарок закончился");tx.update(shopRef,{stock:firebase.firestore.FieldValue.increment(-1)});}
-            tx.update(userRef,{fire:firebase.firestore.FieldValue.increment(-p)});
-            tx.set(giftRef,{giftId:giftId,name:x.name||"Подарок",emoji:x.emoji||"🎁",photoUrl:x.photoUrl||"",price:p,rarity:x.rarity||"common",category:x.category||"normal",fromUid:uid,fromUsername:profile.username||"",fromNickname:profile.nickname||"",toUid:uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-          });
-        }).then(function(){
-          profile.fire=Math.max(0,Number(profile.fire||0)-price);renderMe();loadMyFire();renderInventory();toast("🎁 Подарок куплен и добавлен в инвентарь","success");
-        });
       }).catch(function(e){toast("❌ "+e.message,"error");});
     };});
     list.querySelectorAll(".gift-delete").forEach(function(b){b.onclick=function(){if(!isOwner())return;if(!confirm("Удалить этот подарок из магазина?"))return;db.collection("shop").doc(this.dataset.id).delete().then(function(){toast("🗑 Подарок удалён","success");}).catch(function(e){toast("❌ "+e.message,"error");});};});
@@ -1931,7 +1894,7 @@ window.openChat=function(chatId){
     shopUnsub=db.collection('shop').where('active','==',true).onSnapshot(function(snap){var gifts=[];snap.forEach(function(doc){var d=doc.data();d.id=doc.id;if(giftMatches(d))gifts.push(d);});
       db.collection('users').doc(me.uid).collection('favorites').get().then(function(fs){var fav={};fs.forEach(function(x){fav[x.id]=true;});gifts=gifts.filter(function(d){if(favOnly&&!fav[d.id])return false;if(d.limited&&d.limitedUntil){var lu=d.limitedUntil.toDate?d.limitedUntil.toDate():new Date(d.limitedUntil);if(!isNaN(lu.getTime())&&lu<new Date())return false;}return true;});
         gifts.sort(function(a,b){if(sortMode==='priceDesc')return Number(b.price||0)-Number(a.price||0);if(sortMode==='rarity')return (rarityWeight[rarityClass(b.rarity)]||1)-(rarityWeight[rarityClass(a.rarity)]||1);if(sortMode==='new'){var at=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0,bt=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return bt-at;}return Number(a.price||0)-Number(b.price||0);});
-        if(!gifts.length){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">Подарков по этому фильтру нет.</div>';return;}var h='';gifts.forEach(function(d){var r=rarityClass(d.rarity),limited=d.limited?'<span class="limited-badge">⏳ Ограниченный'+(d.stock!=null?' · '+d.stock+' шт.':'')+'</span>':'';var art=d.photoUrl?'<img class="gift-art" src="'+esc(d.photoUrl)+'" alt="" onerror="this.style.display=\'none\'">':'<div class="gift-emoji">'+esc(d.emoji||'🎁')+'</div>';h+='<div class="gift-card '+r+'">'+art+'<div style="flex:1;min-width:0"><div style="font-weight:700">'+esc(d.name||'Подарок')+'</div><span class="gift-rarity '+r+'">'+esc(rarityName(r))+'</span> '+limited+'<div style="color:#fbbf24;font-size:12px;margin-top:5px">🔥 '+Number(d.price||0)+' · '+esc(categoryName(d.category||'normal'))+'</div></div><button class="fav-star" data-fav="'+esc(d.id)+'">'+(fav[d.id]?'❤️':'🤍')+'</button><button class="btn-primary gift-own-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Купить</button><button class="btn-alt gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Подарить</button></div>';});list.innerHTML=h;
+        if(!gifts.length){list.innerHTML='<div style="padding:24px;text-align:center;color:#6b7280">Подарков по этому фильтру нет.</div>';return;}var h='';gifts.forEach(function(d){var r=rarityClass(d.rarity),limited=d.limited?'<span class="limited-badge">⏳ Ограниченный'+(d.stock!=null?' · '+d.stock+' шт.':'')+'</span>':'';var art=d.photoUrl?'<img class="gift-art" src="'+esc(d.photoUrl)+'" alt="" onerror="this.style.display=\'none\'">':'<div class="gift-emoji">'+esc(d.emoji||'🎁')+'</div>';h+='<div class="gift-card '+r+'">'+art+'<div style="flex:1;min-width:0"><div style="font-weight:700">'+esc(d.name||'Подарок')+'</div><span class="gift-rarity '+r+'">'+esc(rarityName(r))+'</span> '+limited+'<div style="color:#fbbf24;font-size:12px;margin-top:5px">🔥 '+Number(d.price||0)+' · '+esc(categoryName(d.category||'normal'))+'</div></div><button class="fav-star" data-fav="'+esc(d.id)+'">'+(fav[d.id]?'❤️':'🤍')+'</button><button class="btn-primary gift-buy" data-id="'+esc(d.id)+'" style="padding:9px 11px">Подарить</button></div>';});list.innerHTML=h;
         list.querySelectorAll('.fav-star').forEach(function(b){b.onclick=function(){var id=this.dataset.fav,ref=db.collection('users').doc(me.uid).collection('favorites').doc(id);(fav[id]?ref.delete():ref.set({giftId:id,createdAt:firebase.firestore.FieldValue.serverTimestamp()})).then(function(){renderShop();});};});
         list.querySelectorAll('.gift-buy').forEach(function(b){b.onclick=function(){db.collection('shop').doc(this.dataset.id).get().then(function(d){if(!d.exists)throw new Error('Подарок не найден');var x=d.data();if(x.limited&&x.limitedUntil&&x.limitedUntil.toDate&&x.limitedUntil.toDate()<new Date())throw new Error('Срок подарка истёк');if(x.stock!=null&&Number(x.stock)<=0)throw new Error('Подарок закончился');selectedGift=Object.assign({id:d.id},x);$('giftSendInfo').innerHTML='<div class="gift-card '+rarityClass(x.rarity)+'" style="margin:0"><div class="gift-emoji">'+esc(x.emoji||'🎁')+'</div><div><b>'+esc(x.name||'Подарок')+'</b><br>🔥 '+Number(x.price||0)+'</div></div>';$('giftRecipient').value='';$('giftSendModal').classList.add('show');}).catch(function(e){toast('❌ '+e.message,'error');});};});
       });
@@ -2099,7 +2062,7 @@ window.openChat=function(chatId){
       if(plan==='month')upd.plusUntil=new Date(Date.now()+30*864e5);
       if(plan==='year')upd.plusUntil=new Date(Date.now()+365*864e5);
       if(plan==='lifetime'){upd.plus=true;upd.plusUntil=null;}
-      db.collection('users').doc(me.uid).update(upd).then(function(){
+      db.collection('users').doc(purchaseUid).update(upd).then(function(){
         profile.fire=Math.max(0,Number(profile.fire||0)-price);profile.plusPlan=plan;profile.plus=plan==='lifetime';profile.plusStarted=new Date();profile.plusUntil=plan==='lifetime'?null:new Date(Date.now()+(plan==='month'?30:365)*86400000);
         renderMe();renderProfileExtras();addHistory('plusPurchase',{plan:plan,price:price,basePrice:base,discountPercent:pct});toast('💎 Towa Plus активирован','success');
       }).catch(function(err){toast('❌ '+err.message,'error');});
@@ -2146,6 +2109,60 @@ window.openChat=function(chatId){
   function setAdminTab(name){var tabs=D('adminTabs'); if(!tabs)return; var b=tabs.querySelector('[data-admin-tab="'+name+'"]'); if(!b)return; tabs.querySelectorAll('button').forEach(function(x){x.classList.toggle('active',x===b)}); document.querySelectorAll('#adminModal .modal-box > div[id$="Tab"]').forEach(function(x){x.classList.add('hidden')}); var p=D('admin'+name.charAt(0).toUpperCase()+name.slice(1)+'Tab');if(p)p.classList.remove('hidden')}
   function addTabButton(name,label){var tabs=D('adminTabs');if(!tabs||tabs.querySelector('[data-admin-tab="'+name+'"]'))return;var b=document.createElement('button');b.dataset.adminTab=name;b.textContent=label;tabs.appendChild(b);b.addEventListener('click',function(){setAdminTab(name);loadAdminSection(name)})}
   function loadAdminSection(name){if(!owner())return; if(name==='promos')loadPromos();if(name==='sales')loadSales();if(name==='roles')loadRoles();if(name==='global')loadGlobal();if(name==='events')loadEvents();if(name==='cases')loadCases();}
+
+  /*
+   * FIX: the old Towa versions installed several different click handlers
+   * for #adminTabs. The first handler only knew 4 tabs, so Events/Cases/Roles/
+   * Sales/Settings caused null.classList errors and old panels remained visible.
+   * Capture the click before those legacy handlers and use one controller.
+   */
+  (function fixAdminTabNavigation(){
+    var tabs=D('adminTabs');
+    if(!tabs)return;
+
+    function activate(name){
+      var btn=tabs.querySelector('[data-admin-tab="'+name+'"]');
+      if(!btn)return;
+
+      document.querySelectorAll('#adminModal .modal-box > div[id$="Tab"]').forEach(function(el){
+        el.classList.add('hidden');
+      });
+
+      var id='admin'+name.charAt(0).toUpperCase()+name.slice(1)+'Tab';
+      var panel=D(id);
+      if(panel)panel.classList.remove('hidden');
+
+      tabs.querySelectorAll('button').forEach(function(b){
+        b.classList.toggle('active',b===btn);
+      });
+
+      if(name==='overview' && typeof renderAdminOverview==='function')renderAdminOverview();
+      if(name==='users' && typeof renderAdminUsers==='function')renderAdminUsers();
+      if(name==='shop' && typeof renderAdminShop==='function')renderAdminShop();
+      if(name==='collections' && typeof loadAdminCollections==='function')loadAdminCollections();
+      if(name==='history' && typeof loadAdminHistory==='function')loadAdminHistory();
+      if(name==='promos' && typeof loadPromos==='function')loadPromos();
+      if(name==='sales' && typeof loadSales==='function')loadSales();
+      if(name==='roles' && typeof loadRoles==='function')loadRoles();
+      if(name==='global' && typeof loadGlobal==='function')loadGlobal();
+      if(name==='events' && typeof loadEvents==='function')loadEvents();
+      if(name==='cases' && typeof loadCases==='function')loadCases();
+    }
+
+    tabs.addEventListener('click',function(ev){
+      var btn=ev.target.closest('button[data-admin-tab]');
+      if(!btn)return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.stopImmediatePropagation();
+      activate(btn.dataset.adminTab);
+    },true);
+
+    // Expose one consistent function for any code that opens a tab directly.
+    window.towaSetAdminTab=activate;
+    activate('overview');
+  })();
+
   ['promos','sales','roles','global','events','cases'].forEach(function(n){var labels={promos:'🎟️ Промокоды',sales:'⚡ Распродажи',roles:'🛡️ Роли',global:'🌐 Настройки',events:'🎉 Ивенты',cases:'🎲 Кейсы'};addTabButton(n,labels[n])});
   function loadPromos(){var box=D('adminPromosList');if(!box)return;db.collection('promoCodes').orderBy('createdAt','desc').limit(100).get().then(function(s){box.innerHTML='';s.forEach(function(d){var x=d.data()||{};box.insertAdjacentHTML('beforeend','<div class="collection-card"><b>'+esc2(x.code)+'</b> — '+esc2(x.type)+' '+Number(x.value||0)+(x.type==='discount'?'%':' 🔥')+'<br><small>Использований: '+Number(x.used||0)+' / '+(Number(x.maxUses||0)||'∞')+(x.until?' · до '+new Date(x.until.toDate?x.until.toDate():x.until).toLocaleString():'')+'</small><button class="btn-alt wide del-promo" data-id="'+esc2(d.id)+'">Удалить</button></div>')});box.querySelectorAll('.del-promo').forEach(function(b){b.onclick=function(){db.collection('promoCodes').doc(this.dataset.id).delete().then(loadPromos)}})}).catch(function(e){box.innerHTML='<small>Ошибка: '+esc2(e.message)+'</small>'})}
   D('createPromoBtn')?.addEventListener('click',function(){if(!owner())return;var code=(D('promoCode').value||'').trim().toUpperCase();if(!/^[A-Z0-9_-]{3,32}$/.test(code)){toast2('Неверный код','error');return}var data={code:code,type:D('promoType').value,value:Math.max(1,Number(D('promoValue').value||0)),maxUses:Math.max(0,Number(D('promoUses').value||0)),used:0,target:D('promoTarget').value,createdAt:firebase.firestore.FieldValue.serverTimestamp(),active:true};var u=iso(D('promoUntil').value);if(u)data.until=new Date(u);db.collection('promoCodes').doc(code).set(data).then(function(){toast2('🎟️ Промокод создан','success');loadPromos()}).catch(function(e){toast2('❌ '+e.message,'error')})});
@@ -2162,7 +2179,7 @@ window.openChat=function(chatId){
   function addLootRow(){var box=D('caseLootRows');if(!box)return;var row=document.createElement('div');row.className='case-loot-row';row.style.cssText='display:flex;gap:6px;margin-top:6px';row.innerHTML='<input class="case-gift-id" placeholder="ID подарка" style="flex:1"><input class="case-weight" type="number" min="1" value="1" placeholder="Вес" style="width:90px"><button class="btn-alt remove-loot" style="width:auto">×</button>';row.querySelector('.remove-loot').onclick=function(){row.remove()};box.appendChild(row)}
   D('addCaseLoot')?.addEventListener('click',addLootRow); if(D('caseLootRows')&&D('caseLootRows').children.length===0)addLootRow();
   D('caseLimited')?.addEventListener('change',function(){D('caseDuration').disabled=!this.checked});
-  D('createCaseBtn')?.addEventListener('click',function(){if(!owner())return;var name=(D('caseName').value||'').trim(),price=Number(D('casePrice').value||0);if(!name||price<1)return toast2('Укажи название и стоимость','error');var loot=[];D('caseLootRows').querySelectorAll('.case-loot-row').forEach(function(r){var id=(r.querySelector('.case-gift-id').value||'').trim(),w=Number(r.querySelector('.case-weight').value||0);if(id&&w>0)loot.push({giftId:id,weight:w})});if(!loot.length)return toast2('Добавь хотя бы один подарок в лут','error');var limited=D('caseLimited').checked,data={name:name,price:price,photoUrl:D('casePhoto').value||'',category:D('caseCategory').value||'special',limited:limited,loot:loot,active:true,createdBy:me.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(limited){var days=Math.max(1,Number(D('caseDuration').value||0));if(!days)return toast2('Укажи срок','error');data.until=new Date(Date.now()+days*864e5)}db.collection('cases').add(data).then(function(){toast2('🎲 Кейс создан','success');loadCases()}).catch(function(e){toast2('❌ Не удалось создать кейс: '+e.message,'error')})});
+  D('createCaseBtn')?.addEventListener('click',function(){if(!owner())return;var name=(D('caseName').value||'').trim(),price=Number(D('casePrice').value||0);if(!name||price<1)return toast2('Укажи название и стоимость','error');var loot=[];D('caseLootRows').querySelectorAll('.case-loot-row').forEach(function(r){var id=(r.querySelector('.case-gift-id').value||'').trim(),w=Number(r.querySelector('.case-weight').value||0);if(id&&w>0)loot.push({giftId:id,weight:w})});if(!loot.length)return toast2('Добавь хотя бы один подарок в лут','error');var limited=D('caseLimited').checked,data={name:name,price:price,photoUrl:D('casePhoto').value||'',category:D('caseCategory').value||'special',limited:limited,loot:loot,active:true,createdBy:me&&me.uid||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(limited){var days=Math.max(1,Number(D('caseDuration').value||0));if(!days)return toast2('Укажи срок','error');data.until=new Date(Date.now()+days*864e5)}db.collection('cases').add(data).then(function(){toast2('🎲 Кейс создан','success');loadCases()}).catch(function(e){toast2('❌ Не удалось создать кейс: '+e.message,'error')})});
   // Friends / blacklist
   function uidByUsername(v){var u=(v||'').replace(/^@/,'').trim().toLowerCase();if(!u)return Promise.reject(new Error('Укажи @username'));return db.collection('usernames').doc(u).get().then(function(d){if(!d.exists)throw new Error('Пользователь не найден');return {uid:d.data().uid,username:u}})}
   function loadFriends(){if(!me)return;var f=D('friendsList'),b=D('blockedList');if(f)db.collection('users').doc(me.uid).collection('friends').get().then(function(s){f.innerHTML=s.empty?'<small>Пока нет друзей.</small>':'';s.forEach(function(d){var x=d.data()||{};f.insertAdjacentHTML('beforeend','<div class="collection-card"><b>@'+esc2(x.username||d.id)+'</b><button class="btn-alt" data-remove-friend="'+esc2(d.id)+'" style="float:right;width:auto">Удалить</button></div>')});f.querySelectorAll('[data-remove-friend]').forEach(function(x){x.onclick=function(){db.collection('users').doc(me.uid).collection('friends').doc(this.dataset.removeFriend).delete().then(loadFriends).catch(function(e){toast2('❌ '+e.message,'error')})}})}).catch(function(e){f.innerHTML='<small style="color:#f87171">Ошибка: '+esc2(e.message)+'</small>';});if(b)db.collection('users').doc(me.uid).collection('blocked').get().then(function(s){b.innerHTML=s.empty?'<small>Чёрный список пуст.</small>':'';s.forEach(function(d){var x=d.data()||{};b.insertAdjacentHTML('beforeend','<div class="collection-card"><b>@'+esc2(x.username||d.id)+'</b><button class="btn-alt" data-unblock="'+esc2(d.id)+'" style="float:right;width:auto">Разблокировать</button></div>')});b.querySelectorAll('[data-unblock]').forEach(function(x){x.onclick=function(){db.collection('users').doc(me.uid).collection('blocked').doc(this.dataset.unblock).delete().then(loadFriends).catch(function(e){toast2('❌ '+e.message,'error')})}})}).catch(function(e){b.innerHTML='<small style="color:#f87171">Ошибка: '+esc2(e.message)+'</small>';});loadMyStats()}
