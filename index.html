@@ -8,7 +8,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:Arial,sans-serif;background:#0a0c10;color:#e6e8eb;height:100vh;overflow:hidden;font-size:14px}
@@ -523,7 +522,6 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();
 var db = firebase.firestore();
-var storage = firebase.storage();
 
 var IMGBB_KEY = "0f26cbc872184d305fcf99072a137c35";
 var OWNER_EMAIL = "flowersonickmer87@gmail.com";
@@ -608,22 +606,18 @@ function compressImage(file, maxSize, quality, cb){
   reader.readAsDataURL(file);
 }
 
-function uploadFirebaseDataUrl(base64, folder){
-  if (!me) return Promise.reject(new Error("Сначала войди в аккаунт"));
-  var clean = base64;
-  var path = String(folder || "uploads").replace(/^\/+|\/+$/g, "") + "/" + me.uid + "/" + Date.now() + "_" + Math.random().toString(36).slice(2) + ".jpg";
-  var ref = storage.ref().child(path);
-  return ref.putString(clean, "data_url", {contentType:"image/jpeg", cacheControl:"public,max-age=31536000"})
-    .then(function(){ return ref.getDownloadURL(); });
+function uploadImageDataUrl(base64){
+  if (!IMGBB_KEY) return Promise.reject(new Error("Не указан IMGBB_KEY"));
+  return uploadImgBB(base64);
 }
 
-function uploadFirebaseFile(file, folder, maxSize, quality){
+function uploadImageFile(file, maxSize, quality){
   return new Promise(function(resolve, reject){
     if (!file) return reject(new Error("Файл не выбран"));
     if (!/^image\//i.test(file.type || "")) return reject(new Error("Можно загружать только изображения"));
     if (file.size > 32 * 1024 * 1024) return reject(new Error("Фото больше 32 МБ"));
     compressImage(file, maxSize || 1600, quality || 0.85, function(base64){
-      uploadFirebaseDataUrl(base64, folder).then(resolve).catch(reject);
+      uploadImageDataUrl(base64).then(resolve).catch(reject);
     });
   });
 }
@@ -749,7 +743,7 @@ on("doLogin", "click", function(){
     .then(function(cred){
       var uid = cred.user.uid;
       var chain = pendingAvatar
-        ? uploadFirebaseDataUrl(pendingAvatar, "users/avatars").then(function(url){ return url; })
+        ? uploadImageDataUrl(pendingAvatar).then(function(url){ return url; })
         : Promise.resolve("");
       return chain.then(function(avatarUrl){
         return db.collection("usernames").doc(uname).set({
@@ -1305,7 +1299,7 @@ function sendPhoto(ev){
   if (file.size > 32 * 1024 * 1024){ toast("Фото больше 32 МБ", "error"); return; }
   toast("📤 Загрузка...");
   compressImage(file, 1600, 0.85, function(b64){
-    uploadFirebaseDataUrl(b64, "users/chatPhotos").then(function(url){
+    uploadImageDataUrl(b64).then(function(url){
       var chatRef = db.collection("chats").doc(openChatId);
       var msgRef = chatRef.collection("messages").doc();
       var now = firebase.firestore.FieldValue.serverTimestamp();
@@ -1533,7 +1527,7 @@ on("saveProfile", "click", function(){
   };
   if (pendingAvatar2){
     toast("📤 Загрузка фото...");
-    uploadFirebaseDataUrl(pendingAvatar2, "users/avatars").then(function(url){ doSave(url); }).catch(function(e){ toast("❌ " + e.message, "error"); });
+    uploadImageDataUrl(pendingAvatar2).then(function(url){ doSave(url); }).catch(function(e){ toast("❌ " + e.message, "error"); });
   } else doSave(null);
 });
 
@@ -1778,7 +1772,7 @@ on("createGiftBtn","click",function(){
   if(!Number.isFinite(price)||price<1){toast("Цена должна быть от 1 🔥","error");return;}
   if(!file){toast("📷 Для подарка обязательно фото","error");return;}
   $("createGiftBtn").disabled=true; $("giftPhotoStatus").textContent="📤 Загружаю фото...";
-  uploadFirebaseFile(file,"admin/shop",900,0.82).then(function(photoUrl){
+  uploadImageFile(file,900,0.82).then(function(photoUrl){
       var limited=$("giftLimited").checked;
       var days=limited?parseInt($("giftDuration").value,10):0;
       var stock=limited?parseInt($("giftStock").value,10):null;
@@ -2160,7 +2154,7 @@ window.openChat=function(chatId){
     if(limited&&!days)return toast2('Укажи срок','error');
     D('createCaseBtn').disabled=true;
     if(D('casePhotoStatus'))D('casePhotoStatus').textContent='📤 Загружаю фото...';
-    uploadFirebaseFile(file,'admin/cases',1200,0.85).then(function(photoUrl){
+    uploadImageFile(file,1200,0.85).then(function(photoUrl){
       var data={name:name,price:price,photoUrl:photoUrl,category:D('caseCategory').value||'special',limited:limited,loot:loot,active:true,createdBy:me.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
       if(limited)data.until=new Date(Date.now()+days*864e5);
       return db.collection('cases').add(data);
